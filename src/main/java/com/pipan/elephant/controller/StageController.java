@@ -30,6 +30,10 @@ public class StageController extends RequireInitController {
         Config config = this.releases.getConfig();
         String source = config.getString("source");
 
+        if (this.releases.isProductionAhead()) {
+            return CommandResult.fail("Cannot create new stage: stage is behind production");
+        }
+
         Directory releaseDir = this.generator.next();
         releaseDir.delete();
 

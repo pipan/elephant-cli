@@ -4,11 +4,11 @@ import com.pipan.filesystem.File;
 import com.pipan.filesystem.ReadException;
 import com.pipan.filesystem.WriteException;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class FileMock implements File {
     private String content;
+    private ReadException readException;
 
     public FileMock() {
         this(null);
@@ -18,6 +18,11 @@ public class FileMock implements File {
         this.content = content;
     }
 
+    public FileMock withReadException(ReadException e) {
+        this.readException = e;
+        return this;
+    }
+
     @Override
     public boolean exists() {
         return this.content != null;
@@ -25,17 +30,15 @@ public class FileMock implements File {
 
     @Override
     public String read() throws ReadException {
+        if (this.readException != null) {
+            throw this.readException;
+        }
         return this.content;
     }
 
     @Override
     public JSONObject readJson() throws ReadException {
-        try {
-            return new JSONObject(this.content);
-        } catch (JSONException ex) {
-            throw new ReadException("Mock json exception", ex);
-        }
-        
+        return new JSONObject(this.read());
     }
 
     @Override

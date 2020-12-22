@@ -4,6 +4,7 @@ import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
 import com.pipan.elephant.DirectoryMock;
+import com.pipan.elephant.FileMock;
 import com.pipan.elephant.command.AssertableCommandResult;
 import com.pipan.filesystem.ReadException;
 
@@ -25,7 +26,9 @@ public class StageControllerTest extends ControllerTemplate {
     @Test
     public void testConfigInvalidJson() throws Exception {
         Assertions.assertThrows(ReadException.class, () -> {
-            this.mockFilesystem.getFile("elephant.json").write("{\"source\":\"test-source}");
+            ((FileMock) this.mockFilesystem.getFile("elephant.json"))
+                .withReadException(new ReadException("Mock read exception"))
+                .write("{\"source\":\"test-source}");
             this.executeController();
         });
     }
@@ -85,6 +88,15 @@ public class StageControllerTest extends ControllerTemplate {
         this.executeController().assertOk();
 
         Assertions.assertEquals("releases/21", this.mockFilesystem.getSymbolicLink("stage_link").getTargetString());
+    }
+
+    @Test
+    public void testCreateNewStageStageBehind() throws Exception {
+        this.mockFilesystem.getFile("elephant.json").write("{\"source\":\"test-source\"}");
+        this.mockFilesystem.getSymbolicLink("stage_link").setTarget("releases/1");
+        this.mockFilesystem.getSymbolicLink("production_link").setTarget("releases/2");
+
+        this.executeController().assertFailed("Cannot create new stage: stage is behind production");
     }
 
     @Test
