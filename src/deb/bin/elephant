@@ -1,0 +1,3 @@
+#!/bin/sh
+
+java -cp /usr/share/jdeb/lib/elephant.jar com.pipan.elephant.App "$@"
