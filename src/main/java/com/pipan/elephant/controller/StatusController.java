@@ -34,7 +34,8 @@ public class StatusController implements Controller {
             return CommandResult.fail("Empty releases directory");
         }
 
-        String status = "";
+        String newLine = System.getProperty("line.separator");
+        String status = newLine;
         for (Directory dir : dirs) {
             List<String> responsibilities = this.getResponsibilities(dir);
 
@@ -42,7 +43,7 @@ public class StatusController implements Controller {
             if (!responsibilities.isEmpty()) {
                 status += " - " + String.join(", ", responsibilities);
             }
-            status += "/n";
+            status += newLine;
         }
 
         return CommandResult.ok(status);

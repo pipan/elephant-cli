@@ -33,16 +33,18 @@ public class StatusControllerTest extends ControllerTemplate {
 
     @Test
     public void testOneDirectory() throws Exception {
+        String newLine = System.getProperty("line.separator");
         this.mockFilesystem.getFile("elephant.json").write("{}");
         this.mockFilesystem.getDirectory("releases").make();
         ((DirectoryMock) this.mockFilesystem.getDirectory("releases"))
             .withChild("1");
 
-        this.executeController().assertOk("1/n");
+        this.executeController().assertOk(newLine + "1" + newLine);
     }
 
     @Test
     public void testMultipleDirectories() throws Exception {
+        String newLine = System.getProperty("line.separator");
         this.mockFilesystem.getFile("elephant.json").write("{}");
         this.mockFilesystem.getDirectory("releases").make();
         ((DirectoryMock) this.mockFilesystem.getDirectory("releases"))
@@ -50,11 +52,12 @@ public class StatusControllerTest extends ControllerTemplate {
             .withChild("2")
             .withChild("test");
 
-        this.executeController().assertOk("1/n2/ntest/n");
+        this.executeController().assertOk(newLine + "1" + newLine + "2" + newLine + "test" + newLine);
     }
 
     @Test
     public void testProductionAndStageSameDirectory() throws Exception {
+        String newLine = System.getProperty("line.separator");
         this.mockFilesystem.getFile("elephant.json").write("{}");
         this.mockFilesystem.getSymbolicLink("production_link").setTarget("releases/1");
         this.mockFilesystem.getSymbolicLink("stage_link").setTarget("releases/1");
@@ -64,11 +67,12 @@ public class StatusControllerTest extends ControllerTemplate {
             .withChild("2")
             .withChild("3");
 
-        this.executeController().assertOk("1 - production, stage/n2/n3/n");
+        this.executeController().assertOk(newLine + "1 - production, stage" + newLine + "2" + newLine + "3" + newLine);
     }
 
     @Test
     public void testProductionAndStageDifferentDirectory() throws Exception {
+        String newLine = System.getProperty("line.separator");
         this.mockFilesystem.getFile("elephant.json").write("{}");
         this.mockFilesystem.getSymbolicLink("production_link").setTarget("releases/2");
         this.mockFilesystem.getSymbolicLink("stage_link").setTarget("releases/3");
@@ -78,6 +82,6 @@ public class StatusControllerTest extends ControllerTemplate {
             .withChild("2")
             .withChild("3");
 
-        this.executeController().assertOk("1/n2 - production/n3 - stage/n");
+        this.executeController().assertOk(newLine + "1" + newLine + "2 - production" + newLine + "3 - stage" + newLine);
     }
 }

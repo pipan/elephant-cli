@@ -55,17 +55,15 @@ public class Kernel
     }
 
     public void handleResult(CommandResult result) {
-        String label = "";
         if (result.isOk()) {
-            label = "[ Done ] ";
+            System.out.println("[ Done ] " + result.getMessage());
         } else {
-            label = "[ Error ] ";
+            System.err.println("[ Error ] " + result.getMessage());
         }
-        System.out.println(label + result.getMessage());
     }
 
     public void handleException(Exception ex) {
-        System.out.println("[ Exception ] " + ex.getMessage());
+        System.err.println("[ Exception ] " + ex.getMessage());
         ex.printStackTrace();
     }
 }
