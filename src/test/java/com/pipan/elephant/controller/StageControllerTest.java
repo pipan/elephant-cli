@@ -5,6 +5,7 @@ import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
 import com.pipan.elephant.DirectoryMock;
 import com.pipan.elephant.command.AssertableCommandResult;
+import com.pipan.filesystem.ReadException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,14 @@ public class StageControllerTest extends ControllerTemplate {
     @Test
     public void testConfigFileNotFound() throws Exception {
         this.executeController().assertFailed("Config file not found");
+    }
+
+    @Test
+    public void testConfigInvalidJson() throws Exception {
+        Assertions.assertThrows(ReadException.class, () -> {
+            this.mockFilesystem.getFile("elephant.json").write("{\"source\":\"test-source}");
+            this.executeController();
+        });
     }
 
     @Test

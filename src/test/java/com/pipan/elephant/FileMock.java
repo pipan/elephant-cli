@@ -1,7 +1,10 @@
 package com.pipan.elephant;
 
 import com.pipan.filesystem.File;
+import com.pipan.filesystem.ReadException;
+import com.pipan.filesystem.WriteException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class FileMock implements File {
@@ -21,22 +24,27 @@ public class FileMock implements File {
     }
 
     @Override
-    public String read() {
+    public String read() throws ReadException {
         return this.content;
     }
 
     @Override
-    public JSONObject readJson() {
-        return new JSONObject(this.content);
+    public JSONObject readJson() throws ReadException {
+        try {
+            return new JSONObject(this.content);
+        } catch (JSONException ex) {
+            throw new ReadException("Mock json exception", ex);
+        }
+        
     }
 
     @Override
-    public void write(String content) {
+    public void write(String content) throws WriteException {
         this.content = content;
     }
 
     @Override
-    public void writeJson(JSONObject content) {
+    public void writeJson(JSONObject content) throws WriteException {
         this.write(content.toString());
     }
 }

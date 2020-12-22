@@ -3,6 +3,7 @@ package com.pipan.filesystem;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DiskFile implements File {
@@ -18,34 +19,35 @@ public class DiskFile implements File {
     }
 
     @Override
-    public String read() {
+    public String read() throws ReadException {
         try {
             byte[] encoded = Files.readAllBytes(this.file.toPath());
             return new String(encoded);
         } catch (IOException | SecurityException | OutOfMemoryError ex) {
-            // TODO throw custom exception
-            ex.printStackTrace();
+            throw new ReadException("Cannot read file: " + ex.getMessage(), ex);
         }
-        return "";
     }
 
     @Override
-    public JSONObject readJson() {
-        return new JSONObject(this.read());
+    public JSONObject readJson() throws ReadException {
+        try {
+            return new JSONObject(this.read());
+        } catch (JSONException ex) {
+            throw new ReadException("Cannot read json file: " + ex.getMessage(), ex);
+        }
     }
 
     @Override
-    public void write(String content) {
+    public void write(String content) throws WriteException {
         try {
             Files.write(this.file.toPath(), content.getBytes());
         } catch (IOException | IllegalArgumentException | SecurityException | UnsupportedOperationException ex) {
-            ex.printStackTrace();
-            // TODO throw custom exception
+            throw new WriteException("Cannot write to file: " + ex.getMessage(), ex);
         }
     }
 
     @Override
-    public void writeJson(JSONObject content) {
+    public void writeJson(JSONObject content) throws WriteException {
         this.write(content.toString());
     }
 }

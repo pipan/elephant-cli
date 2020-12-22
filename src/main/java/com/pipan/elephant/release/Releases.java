@@ -6,6 +6,7 @@ import java.util.Comparator;
 import com.pipan.elephant.config.Config;
 import com.pipan.elephant.workingdir.WorkingDirectory;
 import com.pipan.filesystem.Directory;
+import com.pipan.filesystem.ReadException;
 
 import org.json.JSONObject;
 
@@ -57,12 +58,12 @@ public class Releases {
         return this.compareStageProduction() < 0;
     }
 
-    public Config getConfig() {
+    public Config getConfig() throws ReadException {
         JSONObject json = this.workingDirectory.getConfigFile().readJson();
         return Config.fromJson(json);
     }
 
-    public Config getSourceConfig() {
+    public Config getSourceConfig() throws ReadException {
         JSONObject json = this.workingDirectory.getConfigFile().readJson();
         String source = json.getString("source");
         if (!json.has(source)) {
