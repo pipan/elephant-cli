@@ -11,7 +11,6 @@ import com.pipan.elephant.controller.RollbackController;
 import com.pipan.elephant.controller.StageController;
 import com.pipan.elephant.controller.StatusController;
 import com.pipan.elephant.controller.UpgradeController;
-import com.pipan.elephant.middleware.StageAheadMiddleware;
 import com.pipan.elephant.middleware.WorkingDirMiddleware;
 import com.pipan.elephant.progress.ConsoleProgress;
 import com.pipan.elephant.progress.Progress;
@@ -69,6 +68,5 @@ public class AppBootstrap extends Bootstrap {
         super.middleware(context);
 
         context.addMiddleware(new WorkingDirMiddleware(this.workingDirectory));
-        context.addMiddleware(new StageAheadMiddleware(this.releases));
     }
 }

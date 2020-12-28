@@ -1,27 +1,27 @@
-package com.pipan.elephant.controller;
+package com.pipan.elephant.middleware;
 
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
-import com.pipan.cli.controller.Controller;
+import com.pipan.cli.middleware.BaseMiddleware;
 import com.pipan.elephant.workingdir.WorkingDirectory;
 import com.pipan.filesystem.File;
 
-abstract public class RequireInitController implements Controller {
+public class InitRequiredMiddleware extends BaseMiddleware {
     protected WorkingDirectory workingDir;
 
-    public RequireInitController(WorkingDirectory workingDir) {
+    public InitRequiredMiddleware(WorkingDirectory workingDir) {
+        super();
         this.workingDir = workingDir;
     }
 
-    abstract protected CommandResult doExecute(Command command) throws Exception;
-
-    public CommandResult execute(Command command) throws Exception {
+    @Override
+    public CommandResult beforeAction(Command command) throws Exception {
         File config = this.workingDir.getConfigFile();
 
         if (!config.exists()) {
             return CommandResult.fail("Config file not found");
         }
 
-        return this.doExecute(command);
+        return super.beforeAction(command);
     }
 }
