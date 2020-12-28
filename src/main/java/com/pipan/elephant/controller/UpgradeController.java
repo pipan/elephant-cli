@@ -5,6 +5,7 @@ import com.pipan.cli.command.CommandResult;
 import com.pipan.elephant.cleaner.Cleaner;
 import com.pipan.elephant.cleaner.RollbackLimitCleaner;
 import com.pipan.elephant.config.Config;
+import com.pipan.elephant.progress.Progress;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.service.ApacheService;
 import com.pipan.elephant.source.UpgraderRepository;
@@ -14,12 +15,14 @@ public class UpgradeController extends RequireInitController {
     private Releases releases;
     private UpgraderRepository upgraderRepository;
     private ApacheService apache;
+    private Progress progress;
 
-    public UpgradeController(Releases releases, UpgraderRepository upgraderRepository, ApacheService apache) {
+    public UpgradeController(Releases releases, UpgraderRepository upgraderRepository, ApacheService apache, Progress progress) {
         super(releases.getWorkingDirectory());
         this.releases = releases;
         this.upgraderRepository = upgraderRepository;
         this.apache = apache;
+        this.progress = progress;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class UpgradeController extends RequireInitController {
             workingDir.getStageLink().getTargetDirectory().getAbsolutePath()
         );
         
-        System.out.println("[ INFO ] Restarting php fpm");
+        this.progress.info("Reloading php fpm");
         this.apache.reloadFpm();
 
         Config config = this.releases.getConfig();

@@ -5,13 +5,16 @@ import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
 import com.pipan.elephant.DirectoryMock;
 import com.pipan.elephant.command.AssertableCommandResult;
+import com.pipan.elephant.progress.ConsoleProgress;
+import com.pipan.elephant.progress.Progress;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class UpgradeControllerTest extends ControllerTemplate {
+    Progress progress = new ConsoleProgress();
     private AssertableCommandResult executeController() throws Exception {
-        Controller controller = new UpgradeController(this.releases, this.upgraderRepository, this.apache);
+        Controller controller = new UpgradeController(this.releases, this.upgraderRepository, this.apache, progress);
         CommandResult result = controller.execute(new Command("upgrade"));
         return new AssertableCommandResult(result);
     }

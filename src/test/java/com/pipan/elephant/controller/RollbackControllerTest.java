@@ -5,13 +5,16 @@ import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
 import com.pipan.elephant.DirectoryMock;
 import com.pipan.elephant.command.AssertableCommandResult;
+import com.pipan.elephant.progress.ConsoleProgress;
+import com.pipan.elephant.progress.Progress;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class RollbackControllerTest extends ControllerTemplate {
     private AssertableCommandResult executeController() throws Exception {
-        Controller controller = new RollbackController(this.releases, this.apache);
+        Progress progress = new ConsoleProgress();
+        Controller controller = new RollbackController(this.releases, this.apache, progress);
         CommandResult result = controller.execute(new Command("rollback"));
         return new AssertableCommandResult(result);
     }

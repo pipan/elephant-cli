@@ -13,6 +13,8 @@ import com.pipan.elephant.controller.StatusController;
 import com.pipan.elephant.controller.UpgradeController;
 import com.pipan.elephant.middleware.StageAheadMiddleware;
 import com.pipan.elephant.middleware.WorkingDirMiddleware;
+import com.pipan.elephant.progress.ConsoleProgress;
+import com.pipan.elephant.progress.Progress;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.service.ApacheService;
 import com.pipan.elephant.service.ComposerService;
@@ -32,9 +34,11 @@ public class AppBootstrap extends Bootstrap {
     private ApacheService apache;
     private GitService git;
     private ComposerService composer;
+    private Progress progress;
 
     public AppBootstrap()
     {
+        this.progress = new ConsoleProgress();
         this.workingDirectory = new ProxyWorkingDirectory();
         this.releases = new Releases(this.workingDirectory);
         this.upgraderRepository = new UpgraderRepository();
@@ -43,8 +47,8 @@ public class AppBootstrap extends Bootstrap {
         this.git = new GitService(this.shell);
         this.composer = new ComposerService(this.shell);
 
-        upgraderRepository.add("git", new GitUpgrader(this.git, this.composer));
-        upgraderRepository.add("composer-project", new ComposerProjectUpgrader(this.composer));
+        upgraderRepository.add("git", new GitUpgrader(this.git, this.composer, this.progress));
+        upgraderRepository.add("composer-project", new ComposerProjectUpgrader(this.composer, this.progress));
     }
 
     @Override
@@ -55,8 +59,8 @@ public class AppBootstrap extends Bootstrap {
         context.addRoute(Arrays.asList("help", "h", "--help", "--h"), new HelpController());
         context.addRoute("init", new InitController(this.workingDirectory));
         context.addRoute("stage", new StageController(this.releases, this.upgraderRepository));
-        context.addRoute("upgrade", new UpgradeController(this.releases, this.upgraderRepository, this.apache));
-        context.addRoute("rollback", new RollbackController(this.releases, this.apache));
+        context.addRoute("upgrade", new UpgradeController(this.releases, this.upgraderRepository, this.apache, this.progress));
+        context.addRoute("rollback", new RollbackController(this.releases, this.apache, this.progress));
         context.addRoute("status", new StatusController(this.releases));
     }
 
