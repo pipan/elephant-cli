@@ -7,6 +7,7 @@ import com.pipan.cli.bootstrap.SimpleContext;
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
+import com.pipan.cli.exception.NotFoundException;
 import com.pipan.cli.middleware.Middleware;
 import com.pipan.cli.routing.RouteTable;
 
@@ -51,6 +52,9 @@ public class Kernel
 
     public CommandResult handleCommand(Command command) throws Exception {
         Controller controller = this.routeTable.getController(command.getName());
+        if (controller == null) {
+            throw new NotFoundException("Command not found: " + command);
+        }
         return controller.execute(command);
     }
 
