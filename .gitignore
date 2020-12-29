@@ -3,5 +3,7 @@ production_link
 stage_link
 .vscode
 .settings
+.gradle
 target
+build
 elephant.json
