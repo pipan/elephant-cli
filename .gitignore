@@ -5,5 +5,4 @@ stage_link
 .settings
 .gradle
 target
-build
 elephant.json

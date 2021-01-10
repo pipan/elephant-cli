@@ -1,0 +1,5 @@
+*
+
+!.gitignore
+!distributions
+!distributions/**

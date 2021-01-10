@@ -1,5 +1,0 @@
-
-#!/bin/sh
-
-chmod +x /usr/share/jdeb/lib/elephant
-ln -sfn /usr/share/jdeb/lib/elephant /usr/bin/elephant
