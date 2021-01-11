@@ -6,9 +6,9 @@ Priority: optional
 Maintainer: Peter Gasparik <gasparik.pe@gmail.com>
 
 Package: elephant
-Version: 0.0.1
+Version: 0.0.3
 Architecture: all
-Distribution: unstable
+Distribution: focal
 Depends: ${misc:Depends}, default-jre | java8-runtime
 Description: CLI for deploying PHP applications
  It will be useful

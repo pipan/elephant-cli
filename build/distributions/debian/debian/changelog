@@ -1,3 +1,27 @@
+elephant (0.0.3) focal; urgency=medium
+
+  * Distribution support for focal
+
+ -- Peter Gasparik <gasparik.pe@gmail.com>  Sat, 10 Jan 2021 17:00:00 +0100
+
+elephant (0.0.2) focal; urgency=medium
+
+  * Distribution support for focal
+
+ -- Peter Gasparik <gasparik.pe@gmail.com>  Sat, 10 Jan 2021 16:30:00 +0100
+
+elephant (0.0.2) bionic; urgency=medium
+
+  * Distribution support for bionic
+
+ -- Peter Gasparik <gasparik.pe@gmail.com>  Sat, 10 Jan 2021 16:30:00 +0100
+
+elephant (0.0.2) xenial; urgency=medium
+
+  * Distribution support for xenial
+
+ -- Peter Gasparik <gasparik.pe@gmail.com>  Sat, 10 Jan 2021 16:30:00 +0100
+
 elephant (0.0.1) trusty; urgency=medium
 
   * Initial release
