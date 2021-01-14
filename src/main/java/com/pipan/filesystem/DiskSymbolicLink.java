@@ -26,6 +26,14 @@ public class DiskSymbolicLink implements SymbolicLink {
     public boolean exists() {
         return this.file.exists();
     }
+
+    @Override
+    public void delete() {
+        if (!this.exists()) {
+            return;
+        }
+        this.file.delete();
+    }
     
     @Override
     public Directory getTargetDirectory() {

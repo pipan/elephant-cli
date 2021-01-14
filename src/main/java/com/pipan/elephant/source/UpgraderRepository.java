@@ -13,6 +13,9 @@ public class UpgraderRepository {
     
     public Upgrader get(String name)
     {
+        if (!this.map.containsKey(name)) {
+            return null;
+        }
         return this.map.get(name);
     }
 

@@ -1,0 +1,7 @@
+{
+    "public": "public",
+    "releases": "releases",
+    "production_link": "production_link",
+    "stage_link": "stage_link",
+    "elephant": "elephant.json"
+}

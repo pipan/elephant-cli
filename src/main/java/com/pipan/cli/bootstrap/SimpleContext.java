@@ -7,16 +7,19 @@ import java.util.List;
 import java.util.Map;
 
 import com.pipan.cli.controller.Controller;
+import com.pipan.cli.exception.ExceptionHandler;
 import com.pipan.cli.middleware.Middleware;
 
-public class SimpleContext implements RouteContext, MiddlewareContext {
+public class SimpleContext implements RouteContext, MiddlewareContext, ExceptionHandlerContext {
     private Map<String, Controller> routes;
     private List<Middleware> middlewares;
+    private List<ExceptionHandler> exceptionHandlers;
 
     public SimpleContext()
     {
         this.routes = new Hashtable<>();
         this.middlewares = new LinkedList<>();
+        this.exceptionHandlers = new LinkedList<>();
     }
 
     @Override
@@ -38,13 +41,21 @@ public class SimpleContext implements RouteContext, MiddlewareContext {
         return this;
     }
 
-    public Map<String, Controller> getRoutes()
-    {
+    @Override
+    public ExceptionHandlerContext addExceptionHandler(ExceptionHandler handler) {
+        this.exceptionHandlers.add(handler);
+        return this;
+    }
+
+    public Map<String, Controller> getRoutes() {
         return this.routes;
     }
 
-    public List<Middleware> getMiddlewares()
-    {
+    public List<Middleware> getMiddlewares() {
         return this.middlewares;
+    }
+
+    public List<ExceptionHandler> getExceptionHandlers() {
+        return this.exceptionHandlers;
     }
 }

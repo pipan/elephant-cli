@@ -19,6 +19,14 @@ public class DiskFile implements File {
     }
 
     @Override
+    public void delete() {
+        if (!this.exists()) {
+            return;
+        }
+        this.file.delete();
+    }
+
+    @Override
     public String read() throws ReadException {
         try {
             byte[] encoded = Files.readAllBytes(this.file.toPath());
@@ -48,6 +56,6 @@ public class DiskFile implements File {
 
     @Override
     public void writeJson(JSONObject content) throws WriteException {
-        this.write(content.toString());
+        this.write(content.toString(4));
     }
 }

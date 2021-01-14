@@ -7,6 +7,7 @@ import com.pipan.cli.bootstrap.SimpleContext;
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
+import com.pipan.cli.exception.ExceptionHandler;
 import com.pipan.cli.exception.NotFoundException;
 import com.pipan.cli.middleware.Middleware;
 import com.pipan.cli.routing.RouteTable;
@@ -15,6 +16,7 @@ public class Kernel
 {
     private RouteTable routeTable;
     private List<Middleware> middlewares;
+    private List<ExceptionHandler> exceptionHandlers;
 
     public Kernel(Bootstrap bootstrap)
     {
@@ -22,12 +24,14 @@ public class Kernel
 
         bootstrap.middleware(context);
         bootstrap.route(context);
+        bootstrap.exceptionHandler(context);
 
         this.middlewares = context.getMiddlewares();
         this.routeTable = new RouteTable(context.getRoutes());
+        this.exceptionHandlers = context.getExceptionHandlers();
     }
 
-    public void run(Command command) {
+    public CommandResult run(Command command) {
         try {
             CommandResult result = null;
             for (Middleware middleware : this.middlewares) {
@@ -44,26 +48,21 @@ public class Kernel
                 middleware.afterAction(result);
             }
 
-            this.handleResult(result);
+            return result;
         } catch (Exception ex) {
-            this.handleException(ex);
+            for (ExceptionHandler handler : this.exceptionHandlers) {
+                handler.handle(ex);
+            }
+            return CommandResult.fail(ex.getMessage());
         }
     }
 
     public CommandResult handleCommand(Command command) throws Exception {
         Controller controller = this.routeTable.getController(command.getName());
         if (controller == null) {
-            throw new NotFoundException("Command not found: " + command);
+            throw new NotFoundException("Command not found: " + command.getName());
         }
         return controller.execute(command);
-    }
-
-    public void handleResult(CommandResult result) {
-        if (result.isOk()) {
-            System.out.println("[ Done ] " + result.getMessage());
-        } else {
-            System.err.println("[ Error ] " + result.getMessage());
-        }
     }
 
     public void handleException(Exception ex) {

@@ -1,0 +1,53 @@
+(Executing source code checkout from git
+!Installing composer dependencies
+(Executing source code checkout from git
+!Installing composer dependencies
+(Executing source code checkout from git
+!Installing composer dependencies
+Set production link
+Set production link: done
+Reloading php fpm
+Reloading php fpm: done
+Set production link
+Set production link: done
+Reloading php fpm
+Reloading php fpm: done
+Set production link
+Set production link: done
+Reloading php fpm
+Reloading php fpm: done
+Set production link
+Set production link: done
+Reloading php fpm
+Reloading php fpm: done
+ (Executing source code checkout from git
+ !Installing composer dependencies
+ !(Executing source code checkout from git
+#"Stage new version
+#"(Executing source code checkout from git
+#"!Installing composer dependencies
+#"Stage new version: done
+#"Set production link
+#"Set production link: done
+#"Reloading php fpm
+#"Reloading php fpm: done
+#"Remove unused upgrades
+#"Remove unused upgrades: done
+#$Set production link
+#$Set production link: done
+#$Reloading php fpm
+#$Reloading php fpm: done
+#$Remove unused upgrades
+#$Remove unused upgrades: done
+#&Stage new version
+#&(Executing source code checkout from git
+#&!Installing composer dependencies
+#&Stage new version: done
+#&Set production link
+#&Set production link: done
+#&Reloading php fpm
+#&Reloading php fpm: done
+#&Remove unused upgrades
+#&Remove unused upgrades: done
+#(Stage new version
+*).Installing composer project with dependencies

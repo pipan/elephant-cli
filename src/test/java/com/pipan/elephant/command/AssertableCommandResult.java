@@ -24,8 +24,8 @@ public class AssertableCommandResult {
     }
 
     public AssertableCommandResult assertEquals(int expectedCode, String expectedMessage) {
-        Assertions.assertEquals(expectedCode, this.getCode());
-        Assertions.assertEquals(expectedMessage, this.getMessage());
+        Assertions.assertEquals(expectedCode, this.getCode(), "Response code is not equal");
+        Assertions.assertEquals(expectedMessage, this.getMessage(), "Response message is not equal");
         return this;
     }
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.pipan.elephant.integration.HelpIntegrationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2021-01-14T22:25:35" hostname="arksys-Lenovo-Yoga-3-14" time="0.009">
+  <properties/>
+  <testcase name="testHelpOptionLong()" classname="com.pipan.elephant.integration.HelpIntegrationTest" time="0.003"/>
+  <testcase name="testHelpOptionShort()" classname="com.pipan.elephant.integration.HelpIntegrationTest" time="0.002"/>
+  <testcase name="testHelpCommand()" classname="com.pipan.elephant.integration.HelpIntegrationTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

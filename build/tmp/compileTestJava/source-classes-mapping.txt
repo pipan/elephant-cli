@@ -1,0 +1,40 @@
+com/pipan/filesystem/FilesystemMock.java
+ com.pipan.filesystem.FilesystemMock
+com/pipan/filesystem/FilesystemMockFactory.java
+ com.pipan.filesystem.FilesystemMockFactory
+com/pipan/filesystem/FileMock.java
+ com.pipan.filesystem.FileMock
+com/pipan/filesystem/SymbolicLinkMock.java
+ com.pipan.filesystem.SymbolicLinkMock
+com/pipan/elephant/command/AssertableCommandResult.java
+ com.pipan.elephant.command.AssertableCommandResult
+com/pipan/elephant/shell/ShellMock.java
+ com.pipan.elephant.shell.ShellMock
+com/pipan/elephant/UpgraderMock.java
+ com.pipan.elephant.UpgraderMock
+com/pipan/cli/command/CommandArgumentTest.java
+ com.pipan.cli.command.CommandArgumentTest
+com/pipan/filesystem/DirectoryMock.java
+ com.pipan.filesystem.DirectoryMock
+com/pipan/elephant/integration/ComposerProjectIntegrationTest.java
+ com.pipan.elephant.integration.ComposerProjectIntegrationTest
+com/pipan/elephant/integration/RollbackIntegrationTest.java
+ com.pipan.elephant.integration.RollbackIntegrationTest
+com/pipan/elephant/integration/GitUpgraderIntegrationTest.java
+ com.pipan.elephant.integration.GitUpgraderIntegrationTest
+com/pipan/elephant/integration/InitIntegrationTest.java
+ com.pipan.elephant.integration.InitIntegrationTest
+com/pipan/elephant/integration/StatusIntegrationTest.java
+ com.pipan.elephant.integration.StatusIntegrationTest
+com/pipan/elephant/integration/HelpIntegrationTest.java
+ com.pipan.elephant.integration.HelpIntegrationTest
+com/pipan/elephant/integration/CommandIntegrationTest.java
+ com.pipan.elephant.integration.CommandIntegrationTest
+com/pipan/elephant/integration/UpgradeIntegrationTest.java
+ com.pipan.elephant.integration.UpgradeIntegrationTest
+com/pipan/elephant/integration/StageIntegrationTest.java
+ com.pipan.elephant.integration.StageIntegrationTest
+com/pipan/elephant/integration/FilesystemSeeder.java
+ com.pipan.elephant.integration.FilesystemSeeder
+com/pipan/elephant/integration/IntegrationTestCase.java
+ com.pipan.elephant.integration.IntegrationTestCase

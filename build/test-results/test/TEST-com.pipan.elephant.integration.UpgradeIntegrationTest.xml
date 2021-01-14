@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.pipan.elephant.integration.UpgradeIntegrationTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2021-01-14T22:25:35" hostname="arksys-Lenovo-Yoga-3-14" time="0.022">
+  <properties/>
+  <testcase name="testRemoveUnusedUpgrades()" classname="com.pipan.elephant.integration.UpgradeIntegrationTest" time="0.007"/>
+  <testcase name="testUpgradeStageAhead()" classname="com.pipan.elephant.integration.UpgradeIntegrationTest" time="0.004"/>
+  <testcase name="testNotInitilizedDirectory()" classname="com.pipan.elephant.integration.UpgradeIntegrationTest" time="0.001"/>
+  <testcase name="testUpgrade()" classname="com.pipan.elephant.integration.UpgradeIntegrationTest" time="0.003"/>
+  <testcase name="testInitializedElephantInvalidJson()" classname="com.pipan.elephant.integration.UpgradeIntegrationTest" time="0.001"/>
+  <testcase name="testInitializedElephantInvalidSource()" classname="com.pipan.elephant.integration.UpgradeIntegrationTest" time="0.002"/>
+  <system-out><![CDATA[Stage new version
+Executing source code checkout from git
+Installing composer dependencies
+Stage new version: done
+Set production link
+Set production link: done
+Reloading php fpm
+Reloading php fpm: done
+Remove unused upgrades
+Remove unused upgrades: done
+Set production link
+Set production link: done
+Reloading php fpm
+Reloading php fpm: done
+Remove unused upgrades
+Remove unused upgrades: done
+Stage new version
+Executing source code checkout from git
+Installing composer dependencies
+Stage new version: done
+Set production link
+Set production link: done
+Reloading php fpm
+Reloading php fpm: done
+Remove unused upgrades
+Remove unused upgrades: done
+Stage new version
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
