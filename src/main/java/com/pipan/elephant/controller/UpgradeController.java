@@ -3,56 +3,64 @@ package com.pipan.elephant.controller;
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.ControllerWithMiddlewares;
-import com.pipan.elephant.cleaner.Cleaner;
+import com.pipan.elephant.action.StageAction;
 import com.pipan.elephant.cleaner.RollbackLimitCleaner;
-import com.pipan.elephant.config.Config;
-import com.pipan.elephant.middleware.InitRequiredMiddleware;
-import com.pipan.elephant.progress.Progress;
+import com.pipan.elephant.config.ElephantConfig;
+import com.pipan.elephant.config.ElephantConfigFactory;
+import com.pipan.elephant.log.Logger;
+import com.pipan.elephant.middleware.ValidateElephantFileMiddleware;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.service.ApacheService;
+import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.source.UpgraderRepository;
 import com.pipan.elephant.workingdir.WorkingDirectory;
+import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
 
 public class UpgradeController extends ControllerWithMiddlewares {
-    private Releases releases;
-    private WorkingDirectory workingDirectory;
+    private WorkingDirectoryFactory workingDirectoryFactory;
+    private Shell shell;
     private UpgraderRepository upgraderRepository;
+    private Logger logger;
     private ApacheService apache;
-    private Progress progress;
 
-    public UpgradeController(Releases releases, UpgraderRepository upgraderRepository, ApacheService apache, Progress progress) {
+    public UpgradeController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, UpgraderRepository upgraderRepository, Logger logger) {
         super();
-        this.releases = releases;
-        this.workingDirectory = this.releases.getWorkingDirectory();
+        this.workingDirectoryFactory = workingDirectoryFactory;
+        this.shell = shell;
         this.upgraderRepository = upgraderRepository;
-        this.apache = apache;
-        this.progress = progress;
+        this.apache = new ApacheService(shell);
+        this.logger = logger;
 
-        this.withMiddlewae(new InitRequiredMiddleware(this.workingDirectory));
+        this.withMiddleware(new ValidateElephantFileMiddleware(this.workingDirectoryFactory, this.shell));
     }
 
     @Override
     protected CommandResult action(Command command) throws Exception {
-        if (!this.releases.isStageAhead()) {
-            StageController stage = new StageController(this.releases, this.upgraderRepository);
-            CommandResult stageResult = stage.execute(command);
-            if (!stageResult.isOk()) {
-                return stageResult;
-            }
+        WorkingDirectory workingDirectory = this.workingDirectoryFactory.create(command);
+        Releases releases = new Releases(workingDirectory);
+
+        if (!releases.isStageAhead()) {
+            this.logger.info("Stage new version");
+            (new StageAction(this.upgraderRepository)).stage(workingDirectory);
+            this.logger.info("Stage new version: done");
         }
 
-        WorkingDirectory workingDir = this.releases.getWorkingDirectory();
-        workingDir.getProductionLink().setTarget(
-            workingDir.getStageLink().getTargetDirectory().getAbsolutePath()
+        this.logger.info("Set production link");
+        workingDirectory.getProductionLink().setTarget(
+            workingDirectory.getStageLink().getTargetDirectory().getAbsolutePath()
         );
+        this.logger.info("Set production link: done");
         
-        this.progress.info("Reloading php fpm");
+        this.logger.info("Reloading php fpm");
         this.apache.reloadFpm();
+        this.logger.info("Reloading php fpm: done");
 
-        Config config = this.releases.getConfig();
-        Cleaner rollbackLimitCleaner = new RollbackLimitCleaner(workingDir, config.getInteger("history_limit", 5));
-        rollbackLimitCleaner.clean();
+        this.logger.info("Remove unused upgrades");
+        ElephantConfig config = (new ElephantConfigFactory()).create(workingDirectory.getConfigFile());
+        (new RollbackLimitCleaner(workingDirectory, config.getHistoryLimit())).clean();
+        this.logger.info("Remove unused upgrades: done");
 
-        return CommandResult.ok("Done");
+        this.shell.out("Upgrade successful");
+        return CommandResult.ok();
     }
 }

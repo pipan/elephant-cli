@@ -1,0 +1,13 @@
+[ command ] [ options ]
+
+Commands:
+    help
+    init
+    status
+    stage
+    upgrade
+    rollback
+
+Options:
+    -d
+    --d

@@ -15,7 +15,7 @@ abstract public class ControllerWithMiddlewares extends HookController {
         this.middlewares = new LinkedList<>();
     }
 
-    protected void withMiddlewae(Middleware middleware) {
+    protected void withMiddleware(Middleware middleware) {
         this.middlewares.add(middleware);
     }
 

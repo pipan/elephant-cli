@@ -1,0 +1,6 @@
+{
+    "source": {
+        "type": "git"
+    },
+    "history_limit": 5
+}

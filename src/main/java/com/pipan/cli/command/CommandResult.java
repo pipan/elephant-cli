@@ -17,6 +17,10 @@ public class CommandResult {
         return new CommandResult(message, 0);
     }
 
+    public static CommandResult ok() {
+        return CommandResult.ok("");
+    }
+
     public static CommandResult fail(String message) {
         return new CommandResult(message, 1);
     }

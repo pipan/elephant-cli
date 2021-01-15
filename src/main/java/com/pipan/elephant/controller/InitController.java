@@ -3,43 +3,41 @@ package com.pipan.elephant.controller;
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
+import com.pipan.elephant.Resource;
+import com.pipan.elephant.log.Logger;
+import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.workingdir.WorkingDirectory;
+import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
 import com.pipan.filesystem.File;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class InitController implements Controller {
-    private WorkingDirectory workingDirectory;
+    private WorkingDirectoryFactory workingDirectoryFactory;
+    private Shell shell;
+    private Logger logger;
 
-    public InitController(WorkingDirectory workingDirectory) {
-        this.workingDirectory = workingDirectory;
+    public InitController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, Logger logger) {
+        this.workingDirectoryFactory = workingDirectoryFactory;
+        this.shell = shell;
+        this.logger = logger;
     }
 
     public CommandResult execute(Command command) throws Exception {
-        File config = this.workingDirectory.getConfigFile();
+        WorkingDirectory workingDirectory = this.workingDirectoryFactory.create(command);
+        File config = workingDirectory.getConfigFile();
 
-        if (config.exists()) {
-            return CommandResult.fail("Config file exists");
+        if (!config.exists()) {
+            this.logger.info("Creating elephant file");
+            config.write(Resource.getContent("template/elephant.json"));
+            this.logger.info("Creating elephant file: done");
         }
 
-        JSONObject json = new JSONObject();
-        try {
-            json.put("source", "git");
-            json.put("history_limit", 5);
-            JSONObject git = new JSONObject();
-            json.put("git", git);
-            git.put("url", "");
-            git.put("composer", true);
-        } catch (JSONException ex) {
-            return CommandResult.fail("Cannot create config file");
+        if (!workingDirectory.getReleasesDirectory().exists()) {
+            this.logger.info("Creating releases directory");
+            workingDirectory.getReleasesDirectory().make();
+            this.logger.info("Creating releases directory: done");
         }
 
-        config.writeJson(json);
-        this.workingDirectory.getReleasesDirectory().make();
-        this.workingDirectory.getPublicDirectory().make();
-        this.workingDirectory.getPublicDirectory().enterDir(".well-known").make();
-
-        return CommandResult.ok("Done");
+        this.shell.out("Initialization successful");
+        return CommandResult.ok();
     }
 }

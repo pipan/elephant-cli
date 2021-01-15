@@ -3,18 +3,18 @@ package com.pipan.elephant.controller;
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
+import com.pipan.elephant.Resource;
+import com.pipan.elephant.shell.Shell;
 
 public class HelpController implements Controller {
+    private Shell shell;
+
+    public HelpController(Shell shell) {
+        this.shell = shell;
+    }
+
     public CommandResult execute(Command command) throws Exception {
-        System.out.println("Available Commands:");
-        System.out.println("init       - ");
-        System.out.println("status     - ");
-        System.out.println("stage      - ");
-        System.out.println("upgrade    - ");
-        System.out.println("rollback   - ");
-        System.out.println("config:get - TODO");
-        System.out.println("config:set - TODO");
-        System.out.println("fix        - TODO");
-        return CommandResult.ok("");
+        this.shell.out(Resource.getContent("help.txt"));
+        return CommandResult.ok();
     }
 }

@@ -1,67 +1,43 @@
 package com.pipan.elephant.controller;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
-import com.pipan.cli.controller.Controller;
-import com.pipan.elephant.release.ReleaseDirectoryComparator;
-import com.pipan.elephant.release.Releases;
+import com.pipan.cli.controller.ControllerWithMiddlewares;
+import com.pipan.elephant.shell.Shell;
+import com.pipan.elephant.middleware.ValidateElephantFileMiddleware;
 import com.pipan.elephant.workingdir.WorkingDirectory;
-import com.pipan.filesystem.Directory;
+import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
+import com.pipan.elephant.workingdir.WorkingDirectoryFormater;
 
-public class StatusController implements Controller {
-    private Releases releases;
-    private Comparator<Directory> dirComparator;
+public class StatusController extends ControllerWithMiddlewares {
+    private WorkingDirectoryFactory workingDirectoryFactory;
+    private Shell shell;
 
-    public StatusController(Releases releases) {
-        this.releases = releases;
-        this.dirComparator = new ReleaseDirectoryComparator();
+    public StatusController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell) {
+        this.workingDirectoryFactory = workingDirectoryFactory;
+        this.shell = shell;
+
+        this.withMiddleware(new ValidateElephantFileMiddleware(this.workingDirectoryFactory, this.shell));
     }
 
     @Override
-    public CommandResult execute(Command command) throws Exception {
-        WorkingDirectory workingDirectory = this.releases.getWorkingDirectory();
+    public CommandResult action(Command command) throws Exception {
+        WorkingDirectory workingDirectory = this.workingDirectoryFactory.create(command);
+
         if (!workingDirectory.getReleasesDirectory().exists()) {
-            return CommandResult.fail("Releases directory does not exists");
+            this.shell.out("Available releases: no release");
+            return CommandResult.ok("No release");
         }
 
-        Collection<? extends Directory> dirs = this.releases.getWorkingDirectory().getReleasesDirectory().getDirectoryList();
-        if (dirs.isEmpty()) {
-            return CommandResult.fail("Empty releases directory");
+        if (workingDirectory.getReleasesDirectory().getDirectoryList().isEmpty()) {
+            this.shell.out("Available releases: no release");
+            return CommandResult.ok("No release");
         }
 
-        String newLine = System.getProperty("line.separator");
-        String status = newLine;
-        for (Directory dir : dirs) {
-            List<String> responsibilities = this.getResponsibilities(dir);
+        WorkingDirectoryFormater formater = new WorkingDirectoryFormater();
+        String status = formater.format(workingDirectory);
 
-            status += dir.getName();
-            if (!responsibilities.isEmpty()) {
-                status += " - " + String.join(", ", responsibilities);
-            }
-            status += newLine;
-        }
-
-        return CommandResult.ok(status);
-    }
-
-    private List<String> getResponsibilities(Directory dir) {
-        List<String> responsibilities = new LinkedList<>();
-
-        Directory productionDir = this.releases.getProductionDirectory();
-        if (this.dirComparator.compare(dir, productionDir) == 0) {
-            responsibilities.add("production");
-        }
-
-        Directory stageDir = this.releases.getStageDirectory();
-        if (this.dirComparator.compare(dir, stageDir) == 0) {
-            responsibilities.add("stage");
-        }
-
-        return responsibilities;
+        this.shell.out("Available releases:\n" + status);
+        return CommandResult.ok();
     }
 }

@@ -3,6 +3,7 @@ package com.pipan.elephant;
 import java.util.Arrays;
 
 import com.pipan.cli.bootstrap.Bootstrap;
+import com.pipan.cli.bootstrap.ExceptionHandlerContext;
 import com.pipan.cli.bootstrap.MiddlewareContext;
 import com.pipan.cli.bootstrap.RouteContext;
 import com.pipan.elephant.controller.HelpController;
@@ -11,62 +12,55 @@ import com.pipan.elephant.controller.RollbackController;
 import com.pipan.elephant.controller.StageController;
 import com.pipan.elephant.controller.StatusController;
 import com.pipan.elephant.controller.UpgradeController;
-import com.pipan.elephant.middleware.WorkingDirMiddleware;
-import com.pipan.elephant.progress.ConsoleProgress;
-import com.pipan.elephant.progress.Progress;
-import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.service.ApacheService;
 import com.pipan.elephant.service.ComposerService;
 import com.pipan.elephant.service.GitService;
 import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.shell.SimpleShell;
-import com.pipan.elephant.source.ComposerProjectUpgrader;
-import com.pipan.elephant.source.GitUpgrader;
+import com.pipan.elephant.source.composerproject.ComposerProjectUpgrader;
+import com.pipan.elephant.source.git.GitUpgrader;
 import com.pipan.elephant.source.UpgraderRepository;
-import com.pipan.elephant.workingdir.ProxyWorkingDirectory;
+import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
+import com.pipan.filesystem.FilesystemFactory;
+import com.pipan.elephant.exceptionhandler.PrintExceptionHandler;
+import com.pipan.elephant.log.Logger;
+import com.pipan.elephant.log.SystemLogger;
 
 public class AppBootstrap extends Bootstrap {
-    private ProxyWorkingDirectory workingDirectory;
-    private Releases releases;
     private UpgraderRepository upgraderRepository;
     private Shell shell;
-    private ApacheService apache;
-    private GitService git;
-    private ComposerService composer;
-    private Progress progress;
+    private FilesystemFactory filesystemFactory;
+    private WorkingDirectoryFactory workingDirectoryFactory;
+    private Logger logger;
 
-    public AppBootstrap()
-    {
-        this.progress = new ConsoleProgress();
-        this.workingDirectory = new ProxyWorkingDirectory();
-        this.releases = new Releases(this.workingDirectory);
+    public AppBootstrap(FilesystemFactory filesystemFactory, Shell shell) {
+        this.filesystemFactory = filesystemFactory;
+        this.shell = shell;
+        this.logger = new SystemLogger();
+
+        this.workingDirectoryFactory = new WorkingDirectoryFactory(this.filesystemFactory);
         this.upgraderRepository = new UpgraderRepository();
-        this.shell = new SimpleShell();
-        this.apache = new ApacheService(this.shell);
-        this.git = new GitService(this.shell);
-        this.composer = new ComposerService(this.shell);
 
-        upgraderRepository.add("git", new GitUpgrader(this.git, this.composer, this.progress));
-        upgraderRepository.add("composer-project", new ComposerProjectUpgrader(this.composer, this.progress));
+        GitService git = new GitService(this.shell);
+        ComposerService composer = new ComposerService(this.shell);
+        upgraderRepository.add("git", new GitUpgrader(git, composer, this.logger));
+        upgraderRepository.add("composer-project", new ComposerProjectUpgrader(composer, this.logger));
     }
 
     @Override
-    public void route(RouteContext context)
-    {
+    public void route(RouteContext context) {
         super.route(context);
 
-        context.addRoute(Arrays.asList("help", "h", "--help", "--h"), new HelpController());
-        context.addRoute("init", new InitController(this.workingDirectory));
-        context.addRoute("stage", new StageController(this.releases, this.upgraderRepository));
-        context.addRoute("upgrade", new UpgradeController(this.releases, this.upgraderRepository, this.apache, this.progress));
-        context.addRoute("rollback", new RollbackController(this.releases, this.apache, this.progress));
-        context.addRoute("status", new StatusController(this.releases));
+        context.addRoute(Arrays.asList("help", "-h", "--help"), new HelpController(this.shell));
+        context.addRoute("init", new InitController(this.workingDirectoryFactory, this.shell, this.logger));
+        context.addRoute("stage", new StageController(this.workingDirectoryFactory, this.shell, this.upgraderRepository));
+        context.addRoute("upgrade", new UpgradeController(this.workingDirectoryFactory, this.shell, this.upgraderRepository, this.logger));
+        context.addRoute("rollback", new RollbackController(this.workingDirectoryFactory, this.shell, this.logger));
+        context.addRoute("status", new StatusController(this.workingDirectoryFactory, this.shell));
     }
 
     @Override
-    public void middleware(MiddlewareContext context) {
-        super.middleware(context);
-
-        context.addMiddleware(new WorkingDirMiddleware(this.workingDirectory));
+    public void exceptionHandler(ExceptionHandlerContext context) {
+        context.addExceptionHandler(new PrintExceptionHandler(this.shell));
     }
 }

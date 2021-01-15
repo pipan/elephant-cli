@@ -27,10 +27,9 @@ public class SimpleWorkingDirectory implements WorkingDirectory {
         String publicDir = "public";
         String production = "production_link";
         String stage = "stage_link";
-        String config = "elephant.json";
 
         return new SimpleWorkingDirectory(
-            filesystem.getFile(config),
+            filesystem.getFile("elephant.json"),
             filesystem.getSymbolicLink(production),
             filesystem.getSymbolicLink(stage),
             filesystem.getDirectory(releases),

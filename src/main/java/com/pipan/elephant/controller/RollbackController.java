@@ -3,48 +3,53 @@ package com.pipan.elephant.controller;
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.ControllerWithMiddlewares;
-import com.pipan.elephant.cleaner.Cleaner;
 import com.pipan.elephant.cleaner.UnusedStageCleaner;
-import com.pipan.elephant.middleware.InitRequiredMiddleware;
-import com.pipan.elephant.progress.Progress;
+import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.service.ApacheService;
+import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.workingdir.WorkingDirectory;
+import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
 import com.pipan.filesystem.Directory;
 
 public class RollbackController extends ControllerWithMiddlewares {
-    private Releases releases;
-    private WorkingDirectory workingDirectory;
-    private ApacheService apache;
-    private Progress progress;
+    protected WorkingDirectoryFactory workingDirectoryFactory;
+    protected Shell shell;
+    protected ApacheService apache;
+    protected Logger logger;
 
-    public RollbackController(Releases releases, ApacheService apache, Progress progress) {
+    public RollbackController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, Logger logger) {
         super();
-        this.releases = releases;
-        this.workingDirectory = this.releases.getWorkingDirectory();
-        this.apache = apache;
-        this.progress = progress;
-
-        this.withMiddlewae(new InitRequiredMiddleware(this.workingDirectory));
+        this.workingDirectoryFactory = workingDirectoryFactory;
+        this.shell = shell;
+        this.logger = logger;
+        this.apache = new ApacheService(shell);
     }
 
     @Override
     protected CommandResult action(Command command) throws Exception {
-        Directory previous = this.releases.getPreviousDirectory();
-        if (previous == null) {
-            return CommandResult.fail("No rollback version available");
+        WorkingDirectory workingDirectory = this.workingDirectoryFactory.create(command);
+        if (!workingDirectory.getReleasesDirectory().exists()) {
+            throw new Exception("No rollback version available");
         }
 
-        this.workingDirectory.getProductionLink().setTarget(
-            previous.getAbsolutePath()
-        );        
+        Releases releases = new Releases(workingDirectory);
+        Directory previous = releases.getPreviousDirectory();
+        if (previous == null) {
+            throw new Exception("No rollback version available");
+        }
 
-        this.progress.info("Reloading php fpm");
+        this.logger.info("Set production link");
+        workingDirectory.getProductionLink().setTarget(previous.getAbsolutePath());
+        this.logger.info("Set production link: done");
+
+        this.logger.info("Reloading php fpm");
         this.apache.reloadFpm();
+        this.logger.info("Reloading php fpm: done");
 
-        Cleaner stageCleaner = new UnusedStageCleaner(this.releases.getWorkingDirectory());
-        stageCleaner.clean();
+        (new UnusedStageCleaner(workingDirectory)).clean();
 
-        return CommandResult.ok("Done");
+        this.shell.out("Rollback successful");
+        return CommandResult.ok();
     }
 }

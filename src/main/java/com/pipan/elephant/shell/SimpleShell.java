@@ -3,6 +3,14 @@ package com.pipan.elephant.shell;
 import java.io.IOException;
 
 public class SimpleShell implements Shell {
+    public void out(String message) {
+        System.out.println(message);
+    }
+
+    public void err(String message) {
+        System.err.println(message);
+    }
+
     public boolean run(String cmd) {
         try {
             return this.runWithException(cmd);

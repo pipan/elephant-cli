@@ -10,4 +10,9 @@ public class Bootstrap {
     {
         
     }
+
+    public void exceptionHandler(ExceptionHandlerContext context)
+    {
+        
+    }
 }
