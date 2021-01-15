@@ -2,6 +2,7 @@ package com.pipan.elephant.integration;
 
 import com.pipan.elephant.Resource;
 import com.pipan.filesystem.DirectoryMock;
+import com.pipan.filesystem.FileMock;
 import com.pipan.filesystem.SymbolicLinkMock;
 
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +41,7 @@ public class StageIntegrationTest extends IntegrationTestCase {
     }
 
     @Test
-    public void testInitializedElephant() throws Exception {
+    public void testStage() throws Exception {
         this.filesystemSeeder.initializeElephant(this.filesystem);
 
         this.run(new String[] {"stage"}).assertOk("");
@@ -49,6 +50,18 @@ public class StageIntegrationTest extends IntegrationTestCase {
         this.shell.assertPrint(0, "Stage successful");
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/1");
+    }
+
+    @Test
+    public void testStageHooks() throws Exception {
+        this.filesystemSeeder.initializeElephant(this.filesystem);
+        this.filesystem.withFile("stage.before", new FileMock("stage.before", ""));
+        this.filesystem.withFile("stage.after", new FileMock("stage.after", ""));
+
+        this.run(new String[] {"stage"}).assertOk("");
+
+        this.shell.assertExecuted("./stage.before /");
+        this.shell.assertExecuted("./stage.after /");
     }
 
     @Test

@@ -48,6 +48,10 @@ public class ShellMock implements Shell{
         return this;
     }
 
+    public ShellMock assertNotExecuted(String cmd) {
+        return this.assertExecuted(cmd, 0);
+    }
+
     public ShellMock assertPrintCount(int count) {
         Assertions.assertEquals(count, this.prints.size(), "Number of shell messages is different");
         return this;

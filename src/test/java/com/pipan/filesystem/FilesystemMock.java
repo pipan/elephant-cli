@@ -15,13 +15,18 @@ public class FilesystemMock implements Filesystem {
     private Map<String, Directory> dirs;
     private Map<String, SymbolicLink> symLinks;
     private Map<String, Filesystem> subsystems;
+    private String base;
 
-    public FilesystemMock()
-    {
+    public FilesystemMock(String base) {
+        this.base = base;
         this.files = new Hashtable<>();
         this.dirs = new Hashtable<>();
         this.symLinks = new Hashtable<>();
         this.subsystems = new Hashtable<>();
+    }
+
+    public FilesystemMock() {
+        this("/");
     }
 
     public void assertFileExists(String name) {
@@ -32,28 +37,29 @@ public class FilesystemMock implements Filesystem {
         Assertions.assertEquals(content, this.getFile(name).read(), "File content is different");
     }
 
-    public FilesystemMock withFile(String name, File file)
-    {
+    public FilesystemMock withFile(String name, File file) {
         this.files.put(name, file);
         return this;
     }
 
-    public FilesystemMock withDir(String name, Directory dir)
-    {
+    public FilesystemMock withDir(String name, Directory dir) {
         this.dirs.put(name, dir);
         return this;
     }
 
-    public FilesystemMock withSubsystem(String name, Filesystem subsystem)
-    {
+    public FilesystemMock withSubsystem(String name, Filesystem subsystem) {
         this.subsystems.put(name, subsystem);
         return this;
     }
 
-    public FilesystemMock withSymbolicLink(String name, SymbolicLink symlink)
-    {
+    public FilesystemMock withSymbolicLink(String name, SymbolicLink symlink) {
         this.symLinks.put(name, symlink);
         return this;
+    }
+
+    @Override
+    public String getBase() {
+        return this.base;
     }
 
     @Override

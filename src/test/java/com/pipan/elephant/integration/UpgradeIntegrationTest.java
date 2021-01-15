@@ -2,6 +2,7 @@ package com.pipan.elephant.integration;
 
 import com.pipan.elephant.Resource;
 import com.pipan.filesystem.DirectoryMock;
+import com.pipan.filesystem.FileMock;
 import com.pipan.filesystem.SymbolicLinkMock;
 
 import org.junit.jupiter.api.Assertions;
@@ -51,6 +52,38 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/1");
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/1");
         this.shell.assertExecuted("sudo systemctl reload php-fpm");
+    }
+
+    @Test
+    public void testUpgradeHooks() throws Exception {
+        this.filesystemSeeder.initializeElephant(this.filesystem);
+        this.filesystem.withFile("stage.before", new FileMock("stage.before", ""));
+        this.filesystem.withFile("stage.after", new FileMock("stage.after", ""));
+        this.filesystem.withFile("upgrade.before", new FileMock("upgrade.before", ""));
+        this.filesystem.withFile("upgrade.after", new FileMock("upgrade.after", ""));
+
+        this.run(new String[] {"upgrade"}).assertOk("");
+
+        this.shell.assertExecuted("./stage.before /");
+        this.shell.assertExecuted("./stage.after /");
+        this.shell.assertExecuted("./upgrade.before /");
+        this.shell.assertExecuted("./upgrade.after /");
+    }
+
+    @Test
+    public void testUpgradeHooksStageAhead() throws Exception {
+        this.filesystemSeeder.stage(this.filesystem);
+        this.filesystem.withFile("stage.before", new FileMock("stage.before", ""));
+        this.filesystem.withFile("stage.after", new FileMock("stage.after", ""));
+        this.filesystem.withFile("upgrade.before", new FileMock("upgrade.before", ""));
+        this.filesystem.withFile("upgrade.after", new FileMock("upgrade.after", ""));
+
+        this.run(new String[] {"upgrade"}).assertOk("");
+
+        this.shell.assertNotExecuted("./stage.before /");
+        this.shell.assertNotExecuted("./stage.after /");
+        this.shell.assertExecuted("./upgrade.before /");
+        this.shell.assertExecuted("./upgrade.after /");
     }
 
     @Test

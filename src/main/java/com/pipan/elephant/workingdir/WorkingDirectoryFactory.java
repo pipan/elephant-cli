@@ -21,12 +21,6 @@ public class WorkingDirectoryFactory {
         
         JSONObject schema = new JSONObject(Resource.getContent("fallback/filesystem.json"));
         
-        return new SimpleWorkingDirectory(
-            filesystem.getFile(schema.getString("elephant")),
-            filesystem.getSymbolicLink(schema.getString("production_link")),
-            filesystem.getSymbolicLink(schema.getString("stage_link")),
-            filesystem.getDirectory(schema.getString("releases")),
-            filesystem.getDirectory(schema.getString("public"))
-        );
+        return new SimpleWorkingDirectory(filesystem, schema);
     }
 }

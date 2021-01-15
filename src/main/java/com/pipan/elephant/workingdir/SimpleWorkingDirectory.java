@@ -1,64 +1,62 @@
 package com.pipan.elephant.workingdir;
 
+import java.util.Map;
+import java.util.Hashtable;
+
 import com.pipan.filesystem.Directory;
 import com.pipan.filesystem.File;
 import com.pipan.filesystem.Filesystem;
 import com.pipan.filesystem.SymbolicLink;
 
-public class SimpleWorkingDirectory implements WorkingDirectory {
-    private File config;
-    private SymbolicLink stage;
-    private SymbolicLink production;
-    private Directory releases;
-    private Directory publicDir;
+import org.json.JSONObject;
 
-    public SimpleWorkingDirectory(File config, SymbolicLink production, SymbolicLink stage, Directory releases, Directory publicDir)
-    {
-        this.config = config;
-        this.stage = stage;
-        this.production = production;
-        this.releases = releases;
-        this.publicDir = publicDir;
+public class SimpleWorkingDirectory implements WorkingDirectory {
+    private Filesystem filesystem;
+    private Map<String, String> map;
+
+    public SimpleWorkingDirectory(Filesystem filesystem, Map<String, String> map) {
+        this.filesystem = filesystem;
+        this.map = map;
     }
 
-    public static WorkingDirectory fromConfig(Filesystem filesystem)
-    {
-        String releases = "releases";
-        String publicDir = "public";
-        String production = "production_link";
-        String stage = "stage_link";
+    public SimpleWorkingDirectory(Filesystem filesystem, JSONObject json) {
+        this.filesystem = filesystem;
+        this.map = new Hashtable();
 
-        return new SimpleWorkingDirectory(
-            filesystem.getFile("elephant.json"),
-            filesystem.getSymbolicLink(production),
-            filesystem.getSymbolicLink(stage),
-            filesystem.getDirectory(releases),
-            filesystem.getDirectory(publicDir)
-        );
+        this.map.put("elephant", json.getString("elephant"));
+        this.map.put("releases", json.getString("releases"));
+        this.map.put("public", json.getString("public"));
+        this.map.put("production_link", json.getString("production_link"));
+        this.map.put("stage_link", json.getString("stage_link"));
+    }
+
+    @Override
+    public Filesystem getFilesystem() {
+        return this.filesystem;
     }
 
     @Override
     public File getConfigFile() {
-        return this.config;
+        return this.filesystem.getFile(this.map.get("elephant"));
     }
 
     @Override
     public SymbolicLink getProductionLink() {
-        return this.production;
+        return this.filesystem.getSymbolicLink(this.map.get("production_link"));
     }
 
     @Override
     public Directory getPublicDirectory() {
-        return this.publicDir;
+        return this.filesystem.getDirectory(this.map.get("public"));
     }
 
     @Override
     public Directory getReleasesDirectory() {
-        return this.releases;
+        return this.filesystem.getDirectory(this.map.get("releases"));
     }
 
     @Override
     public SymbolicLink getStageLink() {
-        return this.stage;
+        return this.filesystem.getSymbolicLink(this.map.get("stage_link"));
     }
 }

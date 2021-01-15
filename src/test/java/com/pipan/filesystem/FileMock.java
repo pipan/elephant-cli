@@ -9,14 +9,21 @@ import org.json.JSONException;
 
 public class FileMock implements File {
     private String content;
+    private String name;
     private ReadException readException;
 
-    public FileMock() {
-        this(null);
+    public FileMock(String name) {
+        this(name, null);
     }
 
-    public FileMock(String content) {
+    public FileMock(String name, String content) {
+        this.name = name;
         this.content = content;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 
     public FileMock withReadException(ReadException e) {

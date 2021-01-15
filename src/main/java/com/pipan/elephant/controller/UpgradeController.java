@@ -1,5 +1,7 @@
 package com.pipan.elephant.controller;
 
+import java.util.Arrays;
+
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.ControllerWithMiddlewares;
@@ -7,6 +9,9 @@ import com.pipan.elephant.action.StageAction;
 import com.pipan.elephant.cleaner.RollbackLimitCleaner;
 import com.pipan.elephant.config.ElephantConfig;
 import com.pipan.elephant.config.ElephantConfigFactory;
+import com.pipan.elephant.hook.Hook;
+import com.pipan.elephant.hook.HookChain;
+import com.pipan.elephant.hook.FileHook;
 import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.middleware.ValidateElephantFileMiddleware;
 import com.pipan.elephant.release.Releases;
@@ -15,21 +20,22 @@ import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.source.UpgraderRepository;
 import com.pipan.elephant.workingdir.WorkingDirectory;
 import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
+import com.pipan.filesystem.Filesystem;
 
 public class UpgradeController extends ControllerWithMiddlewares {
     private WorkingDirectoryFactory workingDirectoryFactory;
     private Shell shell;
-    private UpgraderRepository upgraderRepository;
     private Logger logger;
     private ApacheService apache;
+    private StageAction stageAction;
 
     public UpgradeController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, UpgraderRepository upgraderRepository, Logger logger) {
         super();
         this.workingDirectoryFactory = workingDirectoryFactory;
         this.shell = shell;
-        this.upgraderRepository = upgraderRepository;
         this.apache = new ApacheService(shell);
         this.logger = logger;
+        this.stageAction = new StageAction(upgraderRepository, this.shell, this.logger);
 
         this.withMiddleware(new ValidateElephantFileMiddleware(this.workingDirectoryFactory, this.shell));
     }
@@ -41,9 +47,11 @@ public class UpgradeController extends ControllerWithMiddlewares {
 
         if (!releases.isStageAhead()) {
             this.logger.info("Stage new version");
-            (new StageAction(this.upgraderRepository)).stage(workingDirectory);
+            this.stageAction.stage(workingDirectory);
             this.logger.info("Stage new version: done");
         }
+
+        this.dispatchBeforeHooks(workingDirectory);
 
         this.logger.info("Set production link");
         workingDirectory.getProductionLink().setTarget(
@@ -60,7 +68,27 @@ public class UpgradeController extends ControllerWithMiddlewares {
         (new RollbackLimitCleaner(workingDirectory, config.getHistoryLimit())).clean();
         this.logger.info("Remove unused upgrades: done");
 
+        this.dispatchAfterHooks(workingDirectory);
+
         this.shell.out("Upgrade successful");
         return CommandResult.ok();
+    }
+
+    protected void dispatchBeforeHooks(WorkingDirectory workingDirectory) {
+        Filesystem filesystem = workingDirectory.getFilesystem();
+        Hook hooks = new HookChain(Arrays.asList(
+            new FileHook(filesystem.getFile("upgrade.before"), filesystem.getBase(), this.shell, this.logger)
+        ));
+
+        hooks.execute();
+    }
+
+    protected void dispatchAfterHooks(WorkingDirectory workingDirectory) {
+        Filesystem filesystem = workingDirectory.getFilesystem();
+        Hook hooks = new HookChain(Arrays.asList(
+            new FileHook(filesystem.getFile("upgrade.after"), filesystem.getBase(), this.shell, this.logger)
+        ));
+
+        hooks.execute();
     }
 }

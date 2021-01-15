@@ -14,6 +14,11 @@ public class DiskFile implements File {
     }
 
     @Override
+    public String getName() {
+        return this.file.getName();
+    }
+
+    @Override
     public boolean exists() {
         return this.file.exists() && this.file.isFile();
     }

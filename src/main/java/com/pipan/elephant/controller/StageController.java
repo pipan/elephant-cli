@@ -6,6 +6,7 @@ import com.pipan.cli.controller.ControllerWithMiddlewares;
 import com.pipan.elephant.cleaner.Cleaner;
 import com.pipan.elephant.config.ElephantConfig;
 import com.pipan.elephant.config.ElephantConfigFactory;
+import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.middleware.ValidateElephantFileMiddleware;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.shell.Shell;
@@ -19,13 +20,13 @@ import com.pipan.filesystem.Directory;
 public class StageController extends ControllerWithMiddlewares {
     private WorkingDirectoryFactory workingDirectoryFactory;
     private Shell shell;
-    private UpgraderRepository upgraderRepository;
+    private StageAction stageAction;
 
-    public StageController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, UpgraderRepository upgraderRepository) {
+    public StageController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, Logger logger, UpgraderRepository upgraderRepository) {
         super();
         this.workingDirectoryFactory = workingDirectoryFactory;
         this.shell = shell;
-        this.upgraderRepository = upgraderRepository;
+        this.stageAction = new StageAction(upgraderRepository, this.shell, logger);
 
         this.withMiddleware(new ValidateElephantFileMiddleware(this.workingDirectoryFactory, this.shell));
     }
@@ -34,7 +35,7 @@ public class StageController extends ControllerWithMiddlewares {
     protected CommandResult action(Command command) throws Exception {
         WorkingDirectory workingDirectory = this.workingDirectoryFactory.create(command);
 
-        (new StageAction(this.upgraderRepository)).stage(workingDirectory);
+        this.stageAction.stage(workingDirectory);
         
         this.shell.out("Stage successful");
         return CommandResult.ok();
