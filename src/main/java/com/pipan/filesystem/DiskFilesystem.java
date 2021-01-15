@@ -17,6 +17,11 @@ public class DiskFilesystem implements Filesystem {
     }
 
     @Override
+    public String getBase() {
+        return this.base.toAbsolutePath().toString();
+    }
+
+    @Override
     public Filesystem withBase(String path) {
         return new DiskFilesystem(Paths.get(path));
     }
