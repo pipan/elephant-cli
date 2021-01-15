@@ -77,8 +77,4 @@ public class StageIntegrationTest extends IntegrationTestCase {
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/3");
     }
-
-    // todo test stage is behind production
-
-    // todo test finnish directory initialization
 }

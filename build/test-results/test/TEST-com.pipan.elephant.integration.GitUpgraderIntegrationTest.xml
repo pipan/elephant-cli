@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.pipan.elephant.integration.GitUpgraderIntegrationTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2021-01-14T22:25:35" hostname="arksys-Lenovo-Yoga-3-14" time="0.006">
+<testsuite name="com.pipan.elephant.integration.GitUpgraderIntegrationTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2021-01-15T16:32:19" hostname="arksys-Lenovo-Yoga-3-14" time="0.007">
   <properties/>
-  <testcase name="testGitCloneWithComposer()" classname="com.pipan.elephant.integration.GitUpgraderIntegrationTest" time="0.003"/>
+  <testcase name="testGitCloneWithComposer()" classname="com.pipan.elephant.integration.GitUpgraderIntegrationTest" time="0.004"/>
   <testcase name="testGitClone()" classname="com.pipan.elephant.integration.GitUpgraderIntegrationTest" time="0.002"/>
   <system-out><![CDATA[Executing source code checkout from git
 Installing composer dependencies

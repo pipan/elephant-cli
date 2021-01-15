@@ -84,24 +84,4 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
 
         ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("4");
     }
-
-    // @Test
-    // public void testRemoveUnusedUpgrades() throws Exception {
-    //     this.filesystemSeeder.upgrade(this.filesystem);
-    //     this.filesystemSeeder.addStage(this.filesystem, "2");
-    //     this.filesystemSeeder.addStage(this.filesystem, "3");
-    //     this.filesystemSeeder.addStage(this.filesystem, "4");
-    //     this.filesystemSeeder.addStage(this.filesystem, "5");
-    //     this.filesystemSeeder.addStage(this.filesystem, "6");
-    //     this.filesystemSeeder.setProduction(this.filesystem, "6");
-
-    //     this.run(new String[] {"upgrade"}).assertOk("");
-
-    //     this.shell.assertPrintCount(1);
-    //     this.shell.assertPrint(0, "Upgrade successful");
-
-    //     ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("1");
-    // }
-
-    // todo test finnish directory initialization
 }

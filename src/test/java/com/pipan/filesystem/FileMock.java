@@ -42,24 +42,8 @@ public class FileMock implements File {
         return this.content;
     }
 
-    // todo move to some kind of json reader
-    @Override
-    public JSONObject readJson() throws ReadException {
-        try {
-            return new JSONObject(this.read());
-        } catch (JSONException ex) {
-            throw new ReadException("Cannot read json file: " + ex.getMessage(), ex);
-        }
-    }
-
     @Override
     public void write(String content) throws WriteException {
         this.content = content;
-    }
-
-    // todo move to some kind of json writer
-    @Override
-    public void writeJson(JSONObject content) throws WriteException {
-        this.write(content.toString());
     }
 }

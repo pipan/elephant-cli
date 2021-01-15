@@ -25,6 +25,7 @@ public class GitUpgrader implements Upgrader {
         if (!result) {
             return result;
         }
+        // todo checkout specific branch
 
         if (gitConfig.hasComposer()) {
             this.logger.info("Installing composer dependencies");

@@ -12,6 +12,7 @@ import com.pipan.elephant.workingdir.WorkingDirectory;
 import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
 import com.pipan.filesystem.File;
 import com.pipan.filesystem.ReadException;
+import com.pipan.filesystem.json.JsonFile;
 
 import org.json.JSONObject;
 
@@ -35,8 +36,9 @@ public class ValidateElephantFileMiddleware extends BaseMiddleware {
             return CommandResult.fail("Elephant file is missing");
         }
 
+        JsonFile jsonFile = new JsonFile(config);
         try {
-            JSONObject json = config.readJson();
+            JSONObject json = jsonFile.read();
         } catch (ReadException ex) {
             this.shell.err("Elephant file is invalid");
             return CommandResult.fail("Elephant file is invalid");

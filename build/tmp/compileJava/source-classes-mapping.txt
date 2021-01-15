@@ -22,8 +22,8 @@ com/pipan/filesystem/FilesystemFactory.java
  com.pipan.filesystem.FilesystemFactory
 com/pipan/cli/exception/ExceptionHandler.java
  com.pipan.cli.exception.ExceptionHandler
-com/pipan/elephant/controller/InitController.java
- com.pipan.elephant.controller.InitController
+com/pipan/elephant/config/OverrideElephantConfig.java
+ com.pipan.elephant.config.OverrideElephantConfig
 com/pipan/elephant/service/ApacheService.java
  com.pipan.elephant.service.ApacheService
 com/pipan/elephant/cleaner/RollbackLimitCleaner.java
@@ -112,8 +112,8 @@ com/pipan/elephant/source/git/GitUpgrader.java
  com.pipan.elephant.source.git.GitUpgrader
 com/pipan/filesystem/DiskFilesystemFactory.java
  com.pipan.filesystem.DiskFilesystemFactory
-com/pipan/elephant/AppBootstrap.java
- com.pipan.elephant.AppBootstrap
+com/pipan/cli/bootstrap/RouteContext.java
+ com.pipan.cli.bootstrap.RouteContext
 com/pipan/filesystem/WriteException.java
  com.pipan.filesystem.WriteException
 com/pipan/filesystem/Filesystem.java
@@ -147,7 +147,7 @@ com/pipan/elephant/action/StageException.java
  com.pipan.elephant.action.StageException
 com/pipan/cli/controller/ControllerWithMiddlewares.java
  com.pipan.cli.controller.ControllerWithMiddlewares
-com/pipan/elephant/config/OverrideElephantConfig.java
- com.pipan.elephant.config.OverrideElephantConfig
-com/pipan/cli/bootstrap/RouteContext.java
- com.pipan.cli.bootstrap.RouteContext
+com/pipan/elephant/AppBootstrap.java
+ com.pipan.elephant.AppBootstrap
+com/pipan/elephant/controller/InitController.java
+ com.pipan.elephant.controller.InitController

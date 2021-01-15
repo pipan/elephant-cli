@@ -1,8 +1,11 @@
-releases
-production_link
-stage_link
 .vscode
 .settings
 .gradle
+
 target
+
 elephant.json
+releases
+public
+production_link
+stage_link

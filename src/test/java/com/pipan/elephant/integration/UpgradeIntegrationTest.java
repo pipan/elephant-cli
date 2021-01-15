@@ -81,6 +81,4 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
 
         ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("1");
     }
-
-    // todo test finnish directory initialization
 }

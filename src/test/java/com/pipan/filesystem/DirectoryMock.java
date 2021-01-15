@@ -24,6 +24,10 @@ public class DirectoryMock implements Directory {
         this.childrens = new TreeMap<>();
     }
 
+    public void assertExists() throws Exception {
+        Assertions.assertTrue(this.exists(), "Directory should exist");
+    }
+
     public void assertChildExists(String dir) throws Exception {
         Assertions.assertTrue(this.enterDir(dir).exists(), "Directory should contain child " + dir);
     }

@@ -37,25 +37,11 @@ public class DiskFile implements File {
     }
 
     @Override
-    public JSONObject readJson() throws ReadException {
-        try {
-            return new JSONObject(this.read());
-        } catch (JSONException ex) {
-            throw new ReadException("Cannot read json file: " + ex.getMessage(), ex);
-        }
-    }
-
-    @Override
     public void write(String content) throws WriteException {
         try {
             Files.write(this.file.toPath(), content.getBytes());
         } catch (IOException | IllegalArgumentException | SecurityException | UnsupportedOperationException ex) {
             throw new WriteException("Cannot write to file: " + ex.getMessage(), ex);
         }
-    }
-
-    @Override
-    public void writeJson(JSONObject content) throws WriteException {
-        this.write(content.toString(4));
     }
 }
