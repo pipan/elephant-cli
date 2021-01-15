@@ -3,7 +3,6 @@ package com.pipan.elephant.controller;
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.ControllerWithMiddlewares;
-import com.pipan.elephant.app.configuration.ProxyConfiguration;
 import com.pipan.elephant.cleaner.Cleaner;
 import com.pipan.elephant.config.ElephantConfig;
 import com.pipan.elephant.config.ElephantConfigFactory;
