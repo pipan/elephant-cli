@@ -1,8 +1,0 @@
-{
-    "source": {
-        "type":"git",
-        "url": ",
-        "composer": true
-    },
-    "history_limit": 5
-}
