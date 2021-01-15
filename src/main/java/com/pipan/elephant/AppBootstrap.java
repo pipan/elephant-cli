@@ -25,13 +25,14 @@ import com.pipan.filesystem.FilesystemFactory;
 import com.pipan.elephant.exceptionhandler.PrintExceptionHandler;
 import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.log.SystemLogger;
+import com.pipan.elephant.middleware.VerboseLoggerMiddleware;
 
 public class AppBootstrap extends Bootstrap {
     private UpgraderRepository upgraderRepository;
     private Shell shell;
     private FilesystemFactory filesystemFactory;
     private WorkingDirectoryFactory workingDirectoryFactory;
-    private Logger logger;
+    private SystemLogger logger;
 
     public AppBootstrap(FilesystemFactory filesystemFactory, Shell shell) {
         this.filesystemFactory = filesystemFactory;
@@ -62,5 +63,10 @@ public class AppBootstrap extends Bootstrap {
     @Override
     public void exceptionHandler(ExceptionHandlerContext context) {
         context.addExceptionHandler(new PrintExceptionHandler(this.shell));
+    }
+
+    @Override
+    public void middleware(MiddlewareContext context) {
+        context.addMiddleware(new VerboseLoggerMiddleware(this.logger));
     }
 }
