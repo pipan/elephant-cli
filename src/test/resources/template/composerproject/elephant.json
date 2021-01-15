@@ -1,0 +1,7 @@
+{
+    "source": {
+        "type": "composer-project",
+        "package": "package/name"
+    },
+    "history_limit": 5
+}

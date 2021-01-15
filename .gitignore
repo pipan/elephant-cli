@@ -5,8 +5,8 @@
 target
 build
 
-elephant.json
-releases
-public
-production_link
-stage_link
+/elephant.json
+/releases
+/public
+/production_link
+/stage_link
