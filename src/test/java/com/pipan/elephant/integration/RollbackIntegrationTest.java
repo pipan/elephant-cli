@@ -69,8 +69,8 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/2");
         this.shell.assertExecuted("sudo systemctl reload php-fpm");
 
-        this.shell.assertNotExecuted("/rollback.before /");
-        this.shell.assertNotExecuted("/rollback.after /");
+        this.shell.assertNotExecuted("/rollback.before ");
+        this.shell.assertNotExecuted("/rollback.after ");
     }
 
     @Test
@@ -81,8 +81,8 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"rollback"}).assertOk("");
 
-        this.shell.assertExecuted("/rollback.before /");
-        this.shell.assertExecuted("/rollback.after /");
+        this.shell.assertExecuted("/rollback.before ");
+        this.shell.assertExecuted("/rollback.after ");
     }
 
     @Test

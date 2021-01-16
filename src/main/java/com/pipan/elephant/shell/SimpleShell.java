@@ -19,10 +19,15 @@ public class SimpleShell implements Shell {
         }
     }
 
+    public boolean runWithException(String... cmd) throws IOException, InterruptedException {
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+        Process p = pb.start();
+        return p.waitFor() == 0;
+    }
+
     public boolean runWithException(String cmd) throws IOException, InterruptedException {
-        Runtime run = Runtime.getRuntime();
-        Process process = run.exec(cmd);
-        process.waitFor();
-        return true;
+        return this.runWithException(new String[] {cmd});
     }
 }

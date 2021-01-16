@@ -21,7 +21,7 @@ public class ActionHooks {
         this.logger = logger;
     }
 
-    public void dispatchBefore(WorkingDirectory workingDirectory) {
+    public void dispatchBefore(WorkingDirectory workingDirectory) throws Exception {
         Filesystem filesystem = workingDirectory.getFilesystem();
         Hook hooks = new HookChain(Arrays.asList(
             new FileHook(filesystem.getFile(this.actionName + ".before"), filesystem.getBase(), this.shell, this.logger)
@@ -30,7 +30,7 @@ public class ActionHooks {
         hooks.execute();
     }
 
-    public void dispatchAfter(WorkingDirectory workingDirectory) {
+    public void dispatchAfter(WorkingDirectory workingDirectory) throws Exception {
         Filesystem filesystem = workingDirectory.getFilesystem();
         Hook hooks = new HookChain(Arrays.asList(
             new FileHook(filesystem.getFile(this.actionName + ".after"), filesystem.getBase(), this.shell, this.logger)
