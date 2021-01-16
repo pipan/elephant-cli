@@ -17,12 +17,12 @@ public class FileHook implements Hook {
         this.base = base;
     }
 
-    public void execute() {
+    public void execute() throws Exception {
         if (this.file == null || !this.file.exists()) {
             return;
         }
         this.logger.info("Executing file hook " + this.file.getName());
-        this.shell.run(this.base + this.file.getName() + " " + this.base);
+        this.shell.runWithException(this.base + java.io.File.separator + this.file.getName(), this.base);
         this.logger.info("Executing file hook " + this.file.getName() + ": done");
     }
 }

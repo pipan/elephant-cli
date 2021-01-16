@@ -26,7 +26,7 @@ public class FilesystemMock implements Filesystem {
     }
 
     public FilesystemMock() {
-        this("/");
+        this("");
     }
 
     public void assertFileExists(String name) {

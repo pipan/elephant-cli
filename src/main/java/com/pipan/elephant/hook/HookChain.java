@@ -12,7 +12,7 @@ public class HookChain implements Hook {
         this.hooks = hooks;
     }
 
-    public void execute() {
+    public void execute() throws Exception {
         for (Hook hook : this.hooks) {
             hook.execute();
         }

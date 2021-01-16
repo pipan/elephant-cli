@@ -106,4 +106,9 @@ public class ShellMock implements Shell{
         }
         return this.responses.get(cmd);
     }
+
+    @Override
+    public boolean runWithException(String... cmd) throws Exception {
+        return this.runWithException(String.join(" ", cmd));
+    }
 }
