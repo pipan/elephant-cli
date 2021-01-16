@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.ControllerWithMiddlewares;
+import com.pipan.elephant.action.ActionHooks;
 import com.pipan.elephant.action.StageAction;
 import com.pipan.elephant.cleaner.RollbackLimitCleaner;
 import com.pipan.elephant.config.ElephantConfig;
@@ -28,6 +29,7 @@ public class UpgradeController extends ControllerWithMiddlewares {
     private Logger logger;
     private ApacheService apache;
     private StageAction stageAction;
+    private ActionHooks actionHooks;
 
     public UpgradeController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, UpgraderRepository upgraderRepository, Logger logger) {
         super();
@@ -36,6 +38,7 @@ public class UpgradeController extends ControllerWithMiddlewares {
         this.apache = new ApacheService(shell);
         this.logger = logger;
         this.stageAction = new StageAction(upgraderRepository, this.shell, this.logger);
+        this.actionHooks = new ActionHooks("upgrade", this.shell, this.logger);
 
         this.withMiddleware(new ValidateElephantFileMiddleware(this.workingDirectoryFactory, this.shell));
     }
@@ -51,7 +54,7 @@ public class UpgradeController extends ControllerWithMiddlewares {
             this.logger.info("Stage new version: done");
         }
 
-        this.dispatchBeforeHooks(workingDirectory);
+        this.actionHooks.dispatchBefore(workingDirectory);
 
         this.logger.info("Set production link");
         workingDirectory.getProductionLink().setTarget(
@@ -68,27 +71,9 @@ public class UpgradeController extends ControllerWithMiddlewares {
         (new RollbackLimitCleaner(workingDirectory, config.getHistoryLimit())).clean();
         this.logger.info("Remove unused upgrades: done");
 
-        this.dispatchAfterHooks(workingDirectory);
+        this.actionHooks.dispatchAfter(workingDirectory);
 
         this.shell.out("Upgrade successful");
         return CommandResult.ok();
-    }
-
-    protected void dispatchBeforeHooks(WorkingDirectory workingDirectory) {
-        Filesystem filesystem = workingDirectory.getFilesystem();
-        Hook hooks = new HookChain(Arrays.asList(
-            new FileHook(filesystem.getFile("upgrade.before"), filesystem.getBase(), this.shell, this.logger)
-        ));
-
-        hooks.execute();
-    }
-
-    protected void dispatchAfterHooks(WorkingDirectory workingDirectory) {
-        Filesystem filesystem = workingDirectory.getFilesystem();
-        Hook hooks = new HookChain(Arrays.asList(
-            new FileHook(filesystem.getFile("upgrade.after"), filesystem.getBase(), this.shell, this.logger)
-        ));
-
-        hooks.execute();
     }
 }

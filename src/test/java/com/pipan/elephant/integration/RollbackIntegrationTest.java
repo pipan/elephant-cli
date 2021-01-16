@@ -2,6 +2,7 @@ package com.pipan.elephant.integration;
 
 import com.pipan.elephant.Resource;
 import com.pipan.filesystem.DirectoryMock;
+import com.pipan.filesystem.FileMock;
 import com.pipan.filesystem.SymbolicLinkMock;
 
 import org.junit.jupiter.api.Assertions;
@@ -53,6 +54,35 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
 
         this.shell.assertPrintErrorCount(1);
         this.shell.assertPrintError(0, "No rollback version available");
+    }
+
+    @Test
+    public void testRollback() throws Exception {
+        this.filesystemSeeder.upgrade(this.filesystem, 2);
+
+        this.run(new String[] {"rollback"}).assertOk("");
+
+        this.shell.assertPrintCount(1);
+        this.shell.assertPrint(0, "Rollback successful");
+
+        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/1");
+        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/2");
+        this.shell.assertExecuted("sudo systemctl reload php-fpm");
+
+        this.shell.assertNotExecuted("/rollback.before /");
+        this.shell.assertNotExecuted("/rollback.after /");
+    }
+
+    @Test
+    public void testRollbackHooks() throws Exception {
+        this.filesystemSeeder.upgrade(this.filesystem, 2);
+        this.filesystem.withFile("rollback.before", new FileMock("rollback.before", ""));
+        this.filesystem.withFile("rollback.after", new FileMock("rollback.after", ""));
+
+        this.run(new String[] {"rollback"}).assertOk("");
+
+        this.shell.assertExecuted("/rollback.before /");
+        this.shell.assertExecuted("/rollback.after /");
     }
 
     @Test

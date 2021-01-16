@@ -21,11 +21,13 @@ public class StageAction {
     protected UpgraderRepository upgraderRepository;
     protected Shell shell;
     protected Logger logger;
+    protected ActionHooks actionHooks;
 
     public StageAction(UpgraderRepository upgraderRepository, Shell shell, Logger logger) {
         this.upgraderRepository = upgraderRepository;
         this.shell = shell;
         this.logger = logger;
+        this.actionHooks = new ActionHooks("stage", this.shell, logger);
     }
 
     public void stage(WorkingDirectory workingDirectory) throws Exception {
@@ -35,7 +37,7 @@ public class StageAction {
             throw new StageException("Invalid source: unknown source type " + config.getSourceType());
         }
 
-        this.dispatchBeforeHooks(workingDirectory);
+        this.actionHooks.dispatchBefore(workingDirectory);
         Directory releaseDir = (new IncrementalDirectoryGenerator(workingDirectory)).next();
         releaseDir.delete();
         
@@ -49,24 +51,6 @@ public class StageAction {
 
         workingDirectory.getStageLink().setTarget(releaseDir.getAbsolutePath());
         (new UnusedStageCleaner(workingDirectory)).clean();
-        this.dispatchAfterHooks(workingDirectory);
-    }
-
-    protected void dispatchBeforeHooks(WorkingDirectory workingDirectory) {
-        Filesystem filesystem = workingDirectory.getFilesystem();
-        Hook hooks = new HookChain(Arrays.asList(
-            new FileHook(filesystem.getFile("stage.before"), filesystem.getBase(), this.shell, this.logger)
-        ));
-
-        hooks.execute();
-    }
-
-    protected void dispatchAfterHooks(WorkingDirectory workingDirectory) {
-        Filesystem filesystem = workingDirectory.getFilesystem();
-        Hook hooks = new HookChain(Arrays.asList(
-            new FileHook(filesystem.getFile("stage.after"), filesystem.getBase(), this.shell, this.logger)
-        ));
-
-        hooks.execute();
+        this.actionHooks.dispatchAfter(workingDirectory);
     }
 }

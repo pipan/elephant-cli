@@ -50,8 +50,6 @@ public class AppBootstrap extends Bootstrap {
 
     @Override
     public void route(RouteContext context) {
-        super.route(context);
-
         context.addRoute(Arrays.asList("help", "-h", "--help"), new HelpController(this.shell));
         context.addRoute("init", new InitController(this.workingDirectoryFactory, this.shell, this.logger));
         context.addRoute("stage", new StageController(this.workingDirectoryFactory, this.shell, this.logger, this.upgraderRepository));
