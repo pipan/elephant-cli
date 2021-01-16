@@ -60,8 +60,8 @@ public class StageIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"stage"}).assertOk("");
 
-        this.shell.assertExecuted("./stage.before /");
-        this.shell.assertExecuted("./stage.after /");
+        this.shell.assertExecuted("/stage.before /");
+        this.shell.assertExecuted("/stage.after /");
     }
 
     @Test

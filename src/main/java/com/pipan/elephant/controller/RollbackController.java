@@ -3,6 +3,7 @@ package com.pipan.elephant.controller;
 import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.ControllerWithMiddlewares;
+import com.pipan.elephant.action.ActionHooks;
 import com.pipan.elephant.cleaner.UnusedStageCleaner;
 import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.release.Releases;
@@ -17,6 +18,7 @@ public class RollbackController extends ControllerWithMiddlewares {
     protected Shell shell;
     protected ApacheService apache;
     protected Logger logger;
+    protected ActionHooks actionHooks;
 
     public RollbackController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, Logger logger) {
         super();
@@ -24,6 +26,7 @@ public class RollbackController extends ControllerWithMiddlewares {
         this.shell = shell;
         this.logger = logger;
         this.apache = new ApacheService(shell);
+        this.actionHooks = new ActionHooks("rollback", this.shell, this.logger);
     }
 
     @Override
@@ -39,6 +42,8 @@ public class RollbackController extends ControllerWithMiddlewares {
             throw new Exception("No rollback version available");
         }
 
+        this.actionHooks.dispatchBefore(workingDirectory);
+
         this.logger.info("Set production link");
         workingDirectory.getProductionLink().setTarget(previous.getAbsolutePath());
         this.logger.info("Set production link: done");
@@ -48,6 +53,8 @@ public class RollbackController extends ControllerWithMiddlewares {
         this.logger.info("Reloading php fpm: done");
 
         (new UnusedStageCleaner(workingDirectory)).clean();
+
+        this.actionHooks.dispatchAfter(workingDirectory);
 
         this.shell.out("Rollback successful");
         return CommandResult.ok();

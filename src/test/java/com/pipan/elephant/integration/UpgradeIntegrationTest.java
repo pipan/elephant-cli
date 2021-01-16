@@ -64,10 +64,10 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"upgrade"}).assertOk("");
 
-        this.shell.assertExecuted("./stage.before /");
-        this.shell.assertExecuted("./stage.after /");
-        this.shell.assertExecuted("./upgrade.before /");
-        this.shell.assertExecuted("./upgrade.after /");
+        this.shell.assertExecuted("/stage.before /");
+        this.shell.assertExecuted("/stage.after /");
+        this.shell.assertExecuted("/upgrade.before /");
+        this.shell.assertExecuted("/upgrade.after /");
     }
 
     @Test
@@ -80,10 +80,10 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"upgrade"}).assertOk("");
 
-        this.shell.assertNotExecuted("./stage.before /");
-        this.shell.assertNotExecuted("./stage.after /");
-        this.shell.assertExecuted("./upgrade.before /");
-        this.shell.assertExecuted("./upgrade.after /");
+        this.shell.assertNotExecuted("/stage.before /");
+        this.shell.assertNotExecuted("/stage.after /");
+        this.shell.assertExecuted("/upgrade.before /");
+        this.shell.assertExecuted("/upgrade.after /");
     }
 
     @Test

@@ -22,7 +22,7 @@ public class FileHook implements Hook {
             return;
         }
         this.logger.info("Executing file hook " + this.file.getName());
-        this.shell.run("./" + this.file.getName() + " " + this.base);
+        this.shell.run(this.base + this.file.getName() + " " + this.base);
         this.logger.info("Executing file hook " + this.file.getName() + ": done");
     }
 }
