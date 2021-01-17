@@ -76,8 +76,8 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
     @Test
     public void testRollbackHooks() throws Exception {
         this.filesystemSeeder.upgrade(this.filesystem, 2);
-        this.filesystem.withFile("rollback.before", new FileMock("rollback.before", ""));
-        this.filesystem.withFile("rollback.after", new FileMock("rollback.after", ""));
+        this.filesystem.withFile("rollback.before", "");
+        this.filesystem.withFile("rollback.after", "");
 
         this.run(new String[] {"rollback"}).assertOk("");
 

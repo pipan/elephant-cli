@@ -9,7 +9,7 @@ import com.pipan.elephant.Resource;
 
 public class FilesystemSeeder {
     public void empty(FilesystemMock filesystem) throws Exception {
-        filesystem.withFile("elephant.json", new FileMock("elephant.json"));
+        filesystem.withFile("elephant.json");
         filesystem.withDir("releases", new DirectoryMock("releases"));
         filesystem.withSymbolicLink("production_link", new SymbolicLinkMock());
         filesystem.withSymbolicLink("stage_link", new SymbolicLinkMock());

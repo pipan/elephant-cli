@@ -55,8 +55,8 @@ public class StageIntegrationTest extends IntegrationTestCase {
     @Test
     public void testStageHooks() throws Exception {
         this.filesystemSeeder.initializeElephant(this.filesystem);
-        this.filesystem.withFile("stage.before", new FileMock("stage.before", ""));
-        this.filesystem.withFile("stage.after", new FileMock("stage.after", ""));
+        this.filesystem.withFile("stage.before", "");
+        this.filesystem.withFile("stage.after", "");
 
         this.run(new String[] {"stage"}).assertOk("");
 

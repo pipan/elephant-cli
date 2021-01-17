@@ -26,9 +26,14 @@ import com.pipan.elephant.exceptionhandler.PrintExceptionHandler;
 import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.log.SystemLogger;
 import com.pipan.elephant.middleware.VerboseLoggerMiddleware;
+import com.pipan.elephant.receipt.Receipt;
+import com.pipan.elephant.receipt.laravel.LaravelReceipt;
+import com.pipan.elephant.repository.MapRepository;
+import com.pipan.elephant.repository.Repository;
 
 public class AppBootstrap extends Bootstrap {
     private UpgraderRepository upgraderRepository;
+    private Repository<Receipt> receiptRepo;
     private Shell shell;
     private FilesystemFactory filesystemFactory;
     private WorkingDirectoryFactory workingDirectoryFactory;
@@ -41,19 +46,22 @@ public class AppBootstrap extends Bootstrap {
 
         this.workingDirectoryFactory = new WorkingDirectoryFactory(this.filesystemFactory);
         this.upgraderRepository = new UpgraderRepository();
+        this.receiptRepo = new MapRepository();
 
         GitService git = new GitService(this.shell);
         ComposerService composer = new ComposerService(this.shell);
         upgraderRepository.add("git", new GitUpgrader(git, composer, this.logger));
         upgraderRepository.add("composer-project", new ComposerProjectUpgrader(composer, this.logger));
+
+        receiptRepo.add("laravel", new LaravelReceipt(this.logger));
     }
 
     @Override
     public void route(RouteContext context) {
         context.addRoute(Arrays.asList("help", "-h", "--help"), new HelpController(this.shell));
         context.addRoute("init", new InitController(this.workingDirectoryFactory, this.shell, this.logger));
-        context.addRoute("stage", new StageController(this.workingDirectoryFactory, this.shell, this.logger, this.upgraderRepository));
-        context.addRoute("upgrade", new UpgradeController(this.workingDirectoryFactory, this.shell, this.upgraderRepository, this.logger));
+        context.addRoute("stage", new StageController(this.workingDirectoryFactory, this.shell, this.logger, this.upgraderRepository, this.receiptRepo));
+        context.addRoute("upgrade", new UpgradeController(this.workingDirectoryFactory, this.shell, this.upgraderRepository, this.logger, this.receiptRepo));
         context.addRoute("rollback", new RollbackController(this.workingDirectoryFactory, this.shell, this.logger));
         context.addRoute("status", new StatusController(this.workingDirectoryFactory, this.shell));
     }

@@ -7,6 +7,8 @@ import com.pipan.elephant.generator.IncrementalDirectoryGenerator;
 import com.pipan.elephant.hook.Hook;
 import com.pipan.elephant.hook.HookChain;
 import com.pipan.elephant.log.Logger;
+import com.pipan.elephant.receipt.Receipt;
+import com.pipan.elephant.repository.Repository;
 import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.hook.FileHook;
 import com.pipan.elephant.config.ElephantConfig;
@@ -21,13 +23,13 @@ public class StageAction {
     protected UpgraderRepository upgraderRepository;
     protected Shell shell;
     protected Logger logger;
-    protected ActionHooks actionHooks;
+    protected Repository<Receipt> receiptRepo;
 
-    public StageAction(UpgraderRepository upgraderRepository, Shell shell, Logger logger) {
+    public StageAction(UpgraderRepository upgraderRepository, Shell shell, Logger logger, Repository<Receipt> receiptRepo) {
         this.upgraderRepository = upgraderRepository;
         this.shell = shell;
         this.logger = logger;
-        this.actionHooks = new ActionHooks("stage", this.shell, logger);
+        this.receiptRepo = receiptRepo;
     }
 
     public void stage(WorkingDirectory workingDirectory) throws Exception {
@@ -37,7 +39,18 @@ public class StageAction {
             throw new StageException("Invalid source: unknown source type " + config.getSourceType());
         }
 
-        this.actionHooks.dispatchBefore(workingDirectory);
+        Receipt receipt = null;
+        String receiptName = config.getReceipt();
+        if (receiptName != null && !receiptName.isEmpty()) {
+            receipt = this.receiptRepo.get(config.getReceipt());
+            if (receipt == null) {
+                this.logger.warning("Receipt unknown '" + receiptName + "'");
+            }
+        }
+
+        ActionHooks actionHooks = new ActionHooks("stage", this.shell, logger, receipt);
+
+        actionHooks.dispatchBefore(workingDirectory);
         Directory releaseDir = (new IncrementalDirectoryGenerator(workingDirectory)).next();
         releaseDir.delete();
         
@@ -51,6 +64,6 @@ public class StageAction {
 
         workingDirectory.getStageLink().setTarget(releaseDir.getAbsolutePath());
         (new UnusedStageCleaner(workingDirectory)).clean();
-        this.actionHooks.dispatchAfter(workingDirectory);
+        actionHooks.dispatchAfter(workingDirectory);
     }
 }

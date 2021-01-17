@@ -25,6 +25,13 @@ public class OverrideElephantConfig implements ElephantConfig {
         return this.config.getSourceType();
     }
 
+    public String getReceipt() {
+        if (this.config.getReceipt() == null) {
+            return this.fallbackConfig.getReceipt();
+        }
+        return this.config.getReceipt();
+    }
+
     public JSONObject getSource() {
         if (this.config.getSource() == null) {
             return this.fallbackConfig.getSource();
