@@ -57,10 +57,10 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
     @Test
     public void testUpgradeHooks() throws Exception {
         this.filesystemSeeder.initializeElephant(this.filesystem);
-        this.filesystem.withFile("stage.before", new FileMock("stage.before", ""));
-        this.filesystem.withFile("stage.after", new FileMock("stage.after", ""));
-        this.filesystem.withFile("upgrade.before", new FileMock("upgrade.before", ""));
-        this.filesystem.withFile("upgrade.after", new FileMock("upgrade.after", ""));
+        this.filesystem.withFile("stage.before", "");
+        this.filesystem.withFile("stage.after", "");
+        this.filesystem.withFile("upgrade.before", "");
+        this.filesystem.withFile("upgrade.after", "");
 
         this.run(new String[] {"upgrade"}).assertOk("");
 
@@ -73,10 +73,10 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
     @Test
     public void testUpgradeHooksStageAhead() throws Exception {
         this.filesystemSeeder.stage(this.filesystem);
-        this.filesystem.withFile("stage.before", new FileMock("stage.before", ""));
-        this.filesystem.withFile("stage.after", new FileMock("stage.after", ""));
-        this.filesystem.withFile("upgrade.before", new FileMock("upgrade.before", ""));
-        this.filesystem.withFile("upgrade.after", new FileMock("upgrade.after", ""));
+        this.filesystem.withFile("stage.before", "");
+        this.filesystem.withFile("stage.after", "");
+        this.filesystem.withFile("upgrade.before", "");
+        this.filesystem.withFile("upgrade.after", "");
 
         this.run(new String[] {"upgrade"}).assertOk("");
 

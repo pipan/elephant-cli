@@ -8,7 +8,9 @@ import com.pipan.elephant.config.ElephantConfig;
 import com.pipan.elephant.config.ElephantConfigFactory;
 import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.middleware.ValidateElephantFileMiddleware;
+import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.release.Releases;
+import com.pipan.elephant.repository.Repository;
 import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.source.Upgrader;
 import com.pipan.elephant.source.UpgraderRepository;
@@ -22,11 +24,11 @@ public class StageController extends ControllerWithMiddlewares {
     private Shell shell;
     private StageAction stageAction;
 
-    public StageController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, Logger logger, UpgraderRepository upgraderRepository) {
+    public StageController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, Logger logger, UpgraderRepository upgraderRepository, Repository<Receipt> receiptRepo) {
         super();
         this.workingDirectoryFactory = workingDirectoryFactory;
         this.shell = shell;
-        this.stageAction = new StageAction(upgraderRepository, this.shell, logger);
+        this.stageAction = new StageAction(upgraderRepository, this.shell, logger, receiptRepo);
 
         this.withMiddleware(new ValidateElephantFileMiddleware(this.workingDirectoryFactory, this.shell));
     }

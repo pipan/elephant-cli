@@ -37,9 +37,17 @@ public class FilesystemMock implements Filesystem {
         Assertions.assertEquals(content, this.getFile(name).read(), "File content is different");
     }
 
-    public FilesystemMock withFile(String name, File file) {
-        this.files.put(name, file);
+    public FilesystemMock withFile(File file) {
+        this.files.put(file.getName(), file);
         return this;
+    }
+
+    public FilesystemMock withFile(String name, String content) {
+        return this.withFile(new FileMock(this.base, name, content));
+    }
+
+    public FilesystemMock withFile(String name) {
+        return this.withFile(name, null);
     }
 
     public FilesystemMock withDir(String name, Directory dir) {

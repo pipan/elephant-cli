@@ -15,7 +15,9 @@ import com.pipan.elephant.hook.HookChain;
 import com.pipan.elephant.hook.FileHook;
 import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.middleware.ValidateElephantFileMiddleware;
+import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.release.Releases;
+import com.pipan.elephant.repository.Repository;
 import com.pipan.elephant.service.ApacheService;
 import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.source.UpgraderRepository;
@@ -31,13 +33,13 @@ public class UpgradeController extends ControllerWithMiddlewares {
     private StageAction stageAction;
     private ActionHooks actionHooks;
 
-    public UpgradeController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, UpgraderRepository upgraderRepository, Logger logger) {
+    public UpgradeController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, UpgraderRepository upgraderRepository, Logger logger, Repository<Receipt> receiptRepo) {
         super();
         this.workingDirectoryFactory = workingDirectoryFactory;
         this.shell = shell;
         this.apache = new ApacheService(shell);
         this.logger = logger;
-        this.stageAction = new StageAction(upgraderRepository, this.shell, this.logger);
+        this.stageAction = new StageAction(upgraderRepository, this.shell, this.logger, receiptRepo);
         this.actionHooks = new ActionHooks("upgrade", this.shell, this.logger);
 
         this.withMiddleware(new ValidateElephantFileMiddleware(this.workingDirectoryFactory, this.shell));

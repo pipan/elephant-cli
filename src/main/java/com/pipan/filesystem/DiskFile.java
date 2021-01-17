@@ -19,6 +19,11 @@ public class DiskFile implements File {
     }
 
     @Override
+    public String getAbsolutePath() {
+        return this.file.getAbsolutePath().toString();
+    }
+
+    @Override
     public boolean exists() {
         return this.file.exists() && this.file.isFile();
     }

@@ -10,13 +10,14 @@ import org.json.JSONException;
 public class FileMock implements File {
     private String content;
     private String name;
+    private String path;
     private ReadException readException;
 
-    public FileMock(String name) {
-        this(name, null);
+    public FileMock(String path, String name) {
+        this(path, name, null);
     }
 
-    public FileMock(String name, String content) {
+    public FileMock(String path, String name, String content) {
         this.name = name;
         this.content = content;
     }
@@ -24,6 +25,11 @@ public class FileMock implements File {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public String getAbsolutePath() {
+        return this.path + java.io.File.separator + this.getName();
     }
 
     public FileMock withReadException(ReadException e) {
