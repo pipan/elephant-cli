@@ -126,25 +126,37 @@ Your application may be a little bit more complex and need some more attantion a
 
 ### Stage Before
 
+file: `stage.before`
+
 This hook will be executed before new stage is downloaded to `releases` directory.
 
 ### Stage After
+
+file: `stage.after`
 
 This hook will be executed after new stage has been downloaded to `releases` directory and linked to `stage_link`.
 
 ### Upgrade Before
 
+file: `upgrade.before`
+
 This hook will be executed before new upgrade is switched. If new release has to be downloaded this hook will be executed after `stage.after`.
 
 ### Upgrade After
+
+file: `upgrade.after`
 
 This hook will be executed after `production_link` has been linked to new release.
 
 ### Rollback Before
 
+file: `rollback.before`
+
 This hook will be executed before `procution_link` has been set to older release.
 
 ### Rollback After
+
+file: `rollback.after`
 
 This hook will be executed afer `procution_link` has been set to older release.
 
