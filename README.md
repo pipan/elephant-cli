@@ -19,55 +19,135 @@ sudo apt-get update
 
 ### Initialize
 
+Every project has the same initialization process. Only difference is in the configuration. Start by creating directory for you project.
+
 ```
+mkdir /some/app/directory
 cd /some/app/directory
 elephant init
 ```
 
-This command creates directory structure for application to live in.
+`elephant init` will create a configuration file called `elephant.json` and it will also create some internal directory structure. Open `elephant.json` and change this file according to the source you want to use. The list of available sources:
 
-* releases - direcotry where new versions will be deployed
-* public - directory where your publically available scripts will be. They can be linked via `production_link` or `stage_link`
-* elephant.json - configuration file for application deployment process
+* [Git](#git)
+* [Composer Project](#composer-project)
 
-### Configuration
+The last thing will be to make a first deploy. For that follow instructions in [upgrade](#upgrade) section.
 
-There are generale values for configuration and then there are specific configuration parts, depending what source you choose.
+### Upgrade
 
-**General**
+The point of upgrade command is to change symbolic link `production_link` to the newest release in `releases` directory.
 
-```json
-{
-    "source":"composer-project | git",
-    "history_limit":"int",
-    "public":"string",
-    "well-known":"boolean",
-    "receipt":"laravel"
-}
+```
+cd /some/app/directory
+elephant upgrade
 ```
 
-**composer-project**
+This command will call [upgrade.before](#upgrade-before) and [upgrade.after](#upgrade-after) hooks.
+
+> This action will internaly run stage command if the current `production_link` is linked to the latest release in `releases` directory
+
+### Stage
+
+Stage command is responsible for downloading next version to releases directory and changing `stage_link` symbolic link to this new directory.
+
+```
+cd /some/app/directory
+elephant stage
+```
+
+This command will call [stage.before](#stage-before) and [stage.after](#stage-after) hooks.
+
+### Rollback
+
+Rollback command will change `production_link` symbolic link to previous version in `releases` directory, if any previous version exists.
+
+```
+cd /some/app/directory
+elephant rollback
+```
+
+This command will call [rollback.before](#rollback-before) and [rollback.after](#rollback-after) hooks.
+
+### Options
+
+**Verbose output**
+
+Every command can run with `--verbose` swithc, which will output detailed information about current processes. Use it to debug unexpected behavior.
+
+**Run Elephant from Different Directory**
+
+You will usualyy run elephant command inside the project you want to deploy. However, you may wish to run elephant command from different directory. To set the working directory use `-d=/path/to/project` swich with absolute path to project.
+
+## Sources
+
+### Git
+
+Deploy project from git repository. Example of source configuration
 
 ```json
 {
-    "source":"composer-project",
-    "history_limit": "",
-    "composer-project":{
-        "package":"string"
+    "source":{
+        "type":"git",
+        "url":"https://git.url.com/user/repo",
+        "composer":"optional boolean",
+        "branch":"optional default master"
     }
 }
 ```
 
-**git**
+This source will always clone repository to the new release and checkout specified branch. If you don't specify any branch, then default branch will be used. You can also set `composer` value to `true` if you want to also install composer dependencies. Theese dependencies are production optimized.
+
+### Composer Project
+
+Deploy project from composer project.
 
 ```json
 {
-    "source":"git",
-    "history_limit": "",
-    "git":{
-        "url":"string",
-        "composer":"boolean"
+    "source":{
+        "type":"composer-project",
+        "package":"vendor/name"
     }
 }
 ```
 
+This source will download the newest version of project in composer. Composer is executed with cache off, so the composer should download the newest version. Bare in mind, that sometimes it takes a few minutes to propagate new version of a project from composer server to your machine.
+
+## Configuration
+
+List of general configuration values, that can be applied for any source
+
+* [receipt](#receipts)
+* **history_limit** - integer, default 5. The maximum number of available rollbacks at any time. This number is checked after every upgrade and if there is more releases then this number in `releases` direcotory, the oldest releease are removed automatically.
+
+## Hooks
+
+Your application may be a little bit more complex and need some more attantion after upgrade, stage or rollback. We allow you to add you own scripts that will be automatically executed before and after a specific action. Convention is to create a file in project directory and name it `<command>.<type>` (ex. `stage.after`)
+
+### Stage Before
+
+This hook will be executed before new stage is downloaded to `releases` directory.
+
+### Stage After
+
+This hook will be executed after new stage has been downloaded to `releases` directory and linked to `stage_link`.
+
+### Upgrade Before
+
+This hook will be executed before new upgrade is switched. If new release has to be downloaded this hook will be executed after `stage.after`.
+
+### Upgrade After
+
+This hook will be executed after `production_link` has been linked to new release.
+
+### Rollback Before
+
+This hook will be executed before `procution_link` has been set to older release.
+
+### Rollback After
+
+This hook will be executed afer `procution_link` has been set to older release.
+
+## Receipts
+
+### Laravel
