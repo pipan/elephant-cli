@@ -4,7 +4,10 @@ import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.ControllerWithMiddlewares;
 import com.pipan.elephant.action.ActionHooks;
+import com.pipan.elephant.action.FpmAction;
 import com.pipan.elephant.cleaner.UnusedStageCleaner;
+import com.pipan.elephant.config.ElephantConfig;
+import com.pipan.elephant.config.ElephantConfigFactory;
 import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.service.ApacheService;
@@ -16,7 +19,7 @@ import com.pipan.filesystem.Directory;
 public class RollbackController extends ControllerWithMiddlewares {
     protected WorkingDirectoryFactory workingDirectoryFactory;
     protected Shell shell;
-    protected ApacheService apache;
+    protected FpmAction fpmAction;
     protected Logger logger;
     protected ActionHooks actionHooks;
 
@@ -25,7 +28,7 @@ public class RollbackController extends ControllerWithMiddlewares {
         this.workingDirectoryFactory = workingDirectoryFactory;
         this.shell = shell;
         this.logger = logger;
-        this.apache = new ApacheService(shell);
+        this.fpmAction = new FpmAction(new ApacheService(shell), this.logger);
         this.actionHooks = new ActionHooks("rollback", this.shell, this.logger);
     }
 
@@ -41,6 +44,8 @@ public class RollbackController extends ControllerWithMiddlewares {
         if (previous == null) {
             throw new Exception("No rollback version available");
         }
+        
+        ElephantConfig config = (new ElephantConfigFactory()).create(workingDirectory.getConfigFile());
 
         this.actionHooks.dispatchBefore(workingDirectory);
 
@@ -48,9 +53,7 @@ public class RollbackController extends ControllerWithMiddlewares {
         workingDirectory.getProductionLink().setTarget(previous.getAbsolutePath());
         this.logger.info("Set production link: done");
 
-        this.logger.info("Reloading php fpm");
-        this.apache.reloadFpm();
-        this.logger.info("Reloading php fpm: done");
+        this.fpmAction.run(config);
 
         (new UnusedStageCleaner(workingDirectory)).clean();
 

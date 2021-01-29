@@ -13,7 +13,11 @@ public class ElephantConfigFactory {
             Resource.getContent("fallback/elephant.json")
         ));
 
-        JsonFile jsonFile = new JsonFile(configFile);
-        return new OverrideElephantConfig(jsonFile.read(), fallbackConfig);
+        try {
+            JsonFile jsonFile = new JsonFile(configFile);
+            return new OverrideElephantConfig(jsonFile.read(), fallbackConfig);
+        } catch (ReadException ex) {
+            return fallbackConfig;
+        }
     }
 }

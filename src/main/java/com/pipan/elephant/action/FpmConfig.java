@@ -3,7 +3,7 @@ package com.pipan.elephant.action;
 import org.json.JSONObject;
 
 public class FpmConfig {
-    private String command;
+    private String command = "";
     private String version = "";
 
     public FpmConfig(JSONObject json) {
