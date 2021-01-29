@@ -114,4 +114,24 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
 
         ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("4");
     }
+
+    @Test
+    public void testRollbackFpmDisabled() throws Exception {
+        this.filesystemSeeder.upgrade(this.filesystem, 2);
+        this.filesystem.getFile("elephant.json").write(Resource.getContent("template/elephant_fpm_disabled.json"));
+
+        this.run(new String[] {"rollback"}).assertOk("");
+
+        this.shell.assertNotExecuted("sudo systemctl reload php-fpm");
+    }
+
+    @Test
+    public void testRollbackFpmVersion() throws Exception {
+        this.filesystemSeeder.upgrade(this.filesystem, 2);
+        this.filesystem.getFile("elephant.json").write(Resource.getContent("template/elephant_fpm_version.json"));
+
+        this.run(new String[] {"rollback"}).assertOk("");
+
+        this.shell.assertExecuted("sudo systemctl reload php-fpm7.3");
+    }
 }
