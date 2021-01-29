@@ -6,6 +6,7 @@ import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.ControllerWithMiddlewares;
 import com.pipan.elephant.action.ActionHooks;
+import com.pipan.elephant.action.FpmAction;
 import com.pipan.elephant.action.StageAction;
 import com.pipan.elephant.cleaner.RollbackLimitCleaner;
 import com.pipan.elephant.config.ElephantConfig;
@@ -29,7 +30,7 @@ public class UpgradeController extends ControllerWithMiddlewares {
     private WorkingDirectoryFactory workingDirectoryFactory;
     private Shell shell;
     private Logger logger;
-    private ApacheService apache;
+    private FpmAction fpmAction;
     private StageAction stageAction;
     private ActionHooks actionHooks;
 
@@ -37,8 +38,8 @@ public class UpgradeController extends ControllerWithMiddlewares {
         super();
         this.workingDirectoryFactory = workingDirectoryFactory;
         this.shell = shell;
-        this.apache = new ApacheService(shell);
         this.logger = logger;
+        this.fpmAction = new FpmAction(new ApacheService(shell), this.logger);
         this.stageAction = new StageAction(upgraderRepository, this.shell, this.logger, receiptRepo);
         this.actionHooks = new ActionHooks("upgrade", this.shell, this.logger);
 
@@ -63,13 +64,13 @@ public class UpgradeController extends ControllerWithMiddlewares {
             workingDirectory.getStageLink().getTargetDirectory().getAbsolutePath()
         );
         this.logger.info("Set production link: done");
+
+        ElephantConfig config = (new ElephantConfigFactory()).create(workingDirectory.getConfigFile());
         
-        this.logger.info("Reloading php fpm");
-        this.apache.reloadFpm();
-        this.logger.info("Reloading php fpm: done");
+        this.fpmAction.run(config);
 
         this.logger.info("Remove unused upgrades");
-        ElephantConfig config = (new ElephantConfigFactory()).create(workingDirectory.getConfigFile());
+        
         (new RollbackLimitCleaner(workingDirectory, config.getHistoryLimit())).clean();
         this.logger.info("Remove unused upgrades: done");
 

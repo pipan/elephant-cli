@@ -114,4 +114,30 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
 
         ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("1");
     }
+
+    @Test
+    public void testUpgradeFpmDisabled() throws Exception {
+        this.filesystemSeeder.initializeElephant(this.filesystem);
+        this.filesystem.getFile("elephant.json").write(Resource.getContent("template/elephant_fpm_disabled.json"));
+
+        this.run(new String[] {"upgrade"}).assertOk("");
+
+        this.shell.assertPrintCount(1);
+        this.shell.assertPrint(0, "Upgrade successful");
+
+        this.shell.assertNotExecuted("sudo systemctl reload php-fpm");
+    }
+
+    @Test
+    public void testUpgradeFpmVersion() throws Exception {
+        this.filesystemSeeder.initializeElephant(this.filesystem);
+        this.filesystem.getFile("elephant.json").write(Resource.getContent("template/elephant_fpm_version.json"));
+
+        this.run(new String[] {"upgrade"}).assertOk("");
+
+        this.shell.assertPrintCount(1);
+        this.shell.assertPrint(0, "Upgrade successful");
+
+        this.shell.assertExecuted("sudo systemctl reload php-fpm7.3");
+    }
 }

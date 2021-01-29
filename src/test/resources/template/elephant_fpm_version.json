@@ -1,0 +1,11 @@
+{
+    "source": {
+        "type": "git",
+        "url": "",
+        "composer": true
+    },
+    "history_limit": 5,
+    "fpm": {
+        "version": "7.3"
+    }
+}

@@ -2,5 +2,9 @@
     "source": {
         "type": "git"
     },
-    "history_limit": 5
+    "history_limit": 5,
+    "fpm": {
+        "command":"reload",
+        "version":""
+    }
 }
