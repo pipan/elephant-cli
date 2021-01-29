@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 public class SimpleElephantConfig implements ElephantConfig {
     protected JSONObject source;
+    protected JSONObject fpm;
     protected String sourceType;
     protected Integer historyLimit;
     protected String receipt;
@@ -14,6 +15,9 @@ public class SimpleElephantConfig implements ElephantConfig {
         this.sourceType = this.source.getString("type");
         if (json.has("receipt")) {
             this.receipt = json.getString("receipt");
+        }
+        if (json.has("fpm")) {
+            this.fpm = json.getJSONObject("fpm");
         }
     }
 
@@ -31,5 +35,9 @@ public class SimpleElephantConfig implements ElephantConfig {
 
     public JSONObject getSource() {
         return this.source;
+    }
+
+    public JSONObject getFpm() {
+        return this.fpm;
     }
 }

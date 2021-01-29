@@ -1,5 +1,7 @@
 package com.pipan.elephant.config;
 
+import java.util.Iterator;
+
 import org.json.JSONObject;
 
 public class OverrideElephantConfig implements ElephantConfig {
@@ -37,5 +39,20 @@ public class OverrideElephantConfig implements ElephantConfig {
             return this.fallbackConfig.getSource();
         }
         return this.config.getSource();
+    }
+
+    public JSONObject getFpm() {
+        JSONObject fallbackJson = this.fallbackConfig.getFpm();
+        JSONObject clone = new JSONObject(fallbackJson, JSONObject.getNames(fallbackJson));
+        if (this.config.getFpm() != null) {
+            JSONObject json = this.config.getFpm();
+            Iterator<String> keys = json.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                clone.put(key, json.get(key));
+            }
+        }
+        
+        return clone;
     }
 }

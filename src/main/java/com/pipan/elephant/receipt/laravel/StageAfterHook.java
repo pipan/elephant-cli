@@ -2,13 +2,18 @@ package com.pipan.elephant.receipt.laravel;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.io.IOException;
 
 import com.pipan.elephant.hook.Hook;
 import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.workingdir.WorkingDirectory;
+import com.pipan.filesystem.Directory;
 import com.pipan.filesystem.File;
+import com.pipan.filesystem.SymbolicLink;
+import com.pipan.filesystem.DiskSymbolicLink;
 
 public class StageAfterHook implements Hook {
     private WorkingDirectory workingDirectory;
@@ -29,11 +34,37 @@ public class StageAfterHook implements Hook {
             this.logger.info("Copying .env file: done");
         }
 
-        // this.logger.info("Setting storage permissions");
-        // java.io.File storageDir = new java.io.File(workingDirectory.getStageLink().getTargetString());
-        // storageDir.setExecutable(true, false);
-        // storageDir.setWritable(true, false);
-        // storageDir.setReadable(true, false);
-        // this.logger.info("Setting storage permissions: done");
+        Directory stageStorageDir = workingDirectory.getStageLink().getTargetDirectory().enterDir("storage");
+        SymbolicLink storageLink = new DiskSymbolicLink(stageStorageDir.getAbsolutePath());
+        Directory storageDir = workingDirectory.getFilesystem().getDirectory("storage");
+        if (!storageDir.exists()) {
+            this.logger.info("Creating storage");
+            this.copyDirectory(
+                Paths.get(stageStorageDir.getAbsolutePath()),
+                Paths.get(storageDir.getAbsolutePath())
+            );
+            this.logger.info("Creating storage: done");
+        }
+
+        this.logger.info("Linking storage");
+        stageStorageDir.delete();
+        storageLink.setTarget(storageDir.getAbsolutePath());
+        this.logger.info("Linking storage: done");
+    }
+
+    private void copyDirectory(Path sourceDir, Path destinationDir) {
+        try {
+            Files.walk(sourceDir)
+                .forEach(sourcePath -> {
+                    try {
+                        Path targetPath = destinationDir.resolve(sourceDir.relativize(sourcePath));
+                        Files.copy(sourcePath, targetPath);
+                    } catch (IOException ex) {
+                        this.logger.warning("Cannot copy directory");
+                    }
+                });
+        } catch (IOException ex) {
+            this.logger.warning("Cannot copy directory");
+        }
     }
 }

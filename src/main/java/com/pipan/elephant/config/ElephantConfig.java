@@ -7,4 +7,5 @@ public interface ElephantConfig {
     public String getSourceType();
     public String getReceipt();
     public JSONObject getSource();
+    public JSONObject getFpm();
 }

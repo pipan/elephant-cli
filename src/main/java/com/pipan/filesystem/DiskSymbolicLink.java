@@ -13,6 +13,10 @@ public class DiskSymbolicLink implements SymbolicLink {
         this.file = file;
     }
 
+    public DiskSymbolicLink(String path) {
+        this(new File(path));
+    }
+
     protected Path getTargetPath() {
         try {
             return this.file.toPath().toRealPath();
