@@ -1,14 +1,12 @@
 Source: elephant
 Standards-Version: 4.5.0
 Section: utils
-Build-Depends: debhelper (>= 12~)
+Build-Depends: debhelper (>= 12~), bash-completion
 Priority: optional
 Maintainer: Peter Gasparik <gasparik.pe@gmail.com>
 
 Package: elephant
-Version: 0.1.0
 Architecture: all
-Distribution: focal
 Depends: ${misc:Depends}, default-jre | java8-runtime
 Description: CLI for deploying PHP applications
  Standardize PHP application deployment process

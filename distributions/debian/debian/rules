@@ -7,7 +7,7 @@
 export DEVSCRIPTS_CHECK_DIRNAME_LEVEL = 0
 
 %:
-	dh $@
+	dh $@ --with bash-completion
 
 #override_dh_auto_install:
 #       dh_auto_install -- prefix=/usr

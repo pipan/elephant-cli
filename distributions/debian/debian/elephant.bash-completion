@@ -1,0 +1,15 @@
+_elephant() 
+{
+    local cur commands switches
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    commands="upgrade stage rollback status help init"
+    switches="--verbose"
+
+    if [[ COMP_CWORD -gt 1 ]] ; then
+        COMPREPLY=( $(compgen -W "${switches}" -- ${cur}) )
+        return 0
+    fi
+    COMPREPLY=( $(compgen -W "${commands} ${switches}" -- ${cur}) )
+    return 0    
+}
+complete -F _elephant elephant
