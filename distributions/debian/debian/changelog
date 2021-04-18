@@ -1,3 +1,10 @@
+elephant (0.1.1) focal; urgency=medium
+
+  * fix git clone command
+  * fix fpm reload command
+
+ -- Peter Gasparik <gasparik.pe@gmail.com>  Sun, 18 Apr 2021 13:30:00 +0100
+
 elephant (0.1.0) focal; urgency=medium
 
   * Hooks

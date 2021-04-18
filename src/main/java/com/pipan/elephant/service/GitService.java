@@ -10,6 +10,6 @@ public class GitService {
     }
 
     public boolean clone(String url, String directory) throws Exception {
-        return this.shell.runWithException("git clone " + url + " " + directory);
+        return this.shell.runWithException("git", "clone", url, directory);
     }   
 }

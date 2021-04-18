@@ -10,7 +10,7 @@ public class ApacheService {
     }
 
     public void restartFpm(String version) throws Exception {
-        this.shell.runWithException("sudo systemctl restart php-fpm" + version);
+        this.shell.runWithException("sudo", "systemctl", "restart", "php-fpm" + version);
     }
 
     public void restartFpm() throws Exception {
@@ -18,7 +18,7 @@ public class ApacheService {
     }
 
     public void reloadFpm(String version) throws Exception {
-        this.shell.runWithException("sudo systemctl reload php-fpm" + version);
+        this.shell.runWithException("sudo", "systemctl", "reload", "php-fpm" + version);
     }
 
     public void reloadFpm() throws Exception {

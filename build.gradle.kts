@@ -33,6 +33,6 @@ application {
 }
 
 group = "com.pipan.elephant"
-version = "0.1.0"
+version = "0.1.1"
 description = "CLI for deploying PHP applications"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
