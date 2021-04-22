@@ -7,6 +7,6 @@ Maintainer: Peter Gasparik <gasparik.pe@gmail.com>
 
 Package: elephant
 Architecture: all
-Depends: ${misc:Depends}, default-jre | java8-runtime
+Depends: ${misc:Depends}, default-jre | java11-runtime
 Description: CLI for deploying PHP applications
  Standardize PHP application deployment process
