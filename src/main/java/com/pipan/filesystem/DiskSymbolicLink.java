@@ -67,7 +67,7 @@ public class DiskSymbolicLink implements SymbolicLink {
     public void setTarget(String target) {
         Path targetPath = Paths.get(target);
         try {
-            if (this.file.exists()) {
+            if (Files.isSymbolicLink(this.file.toPath())) {
                 this.file.delete();
             }
             Files.createSymbolicLink(this.file.toPath(), targetPath);
