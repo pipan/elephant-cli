@@ -1,3 +1,11 @@
+elephant (0.2.0) focal; urgency=medium
+
+  * increase required java version to 11
+  * add github release source type
+  * fix not updating symlink if symlink points to non existing file
+
+ -- Peter Gasparik <gasparik.pe@gmail.com>  Thu, 22 Apr 2021 22:30:00 +0100
+
 elephant (0.1.1) focal; urgency=medium
 
   * fix git clone command
