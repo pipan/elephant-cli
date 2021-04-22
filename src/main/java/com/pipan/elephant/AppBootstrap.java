@@ -6,6 +6,7 @@ import com.pipan.cli.bootstrap.Bootstrap;
 import com.pipan.cli.bootstrap.ExceptionHandlerContext;
 import com.pipan.cli.bootstrap.MiddlewareContext;
 import com.pipan.cli.bootstrap.RouteContext;
+import com.pipan.elephant.archive.ArchiveService;
 import com.pipan.elephant.controller.HelpController;
 import com.pipan.elephant.controller.InitController;
 import com.pipan.elephant.controller.RollbackController;
@@ -19,10 +20,12 @@ import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.shell.SimpleShell;
 import com.pipan.elephant.source.composerproject.ComposerProjectUpgrader;
 import com.pipan.elephant.source.git.GitUpgrader;
+import com.pipan.elephant.source.githubrelease.GithubReleaseUpgrader;
 import com.pipan.elephant.source.UpgraderRepository;
 import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
 import com.pipan.filesystem.FilesystemFactory;
 import com.pipan.elephant.exceptionhandler.PrintExceptionHandler;
+import com.pipan.elephant.github.GithubApi;
 import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.log.SystemLogger;
 import com.pipan.elephant.middleware.VerboseLoggerMiddleware;
@@ -50,8 +53,11 @@ public class AppBootstrap extends Bootstrap {
 
         GitService git = new GitService(this.shell);
         ComposerService composer = new ComposerService(this.shell);
+        GithubApi githubApi = new GithubApi();
+        ArchiveService archiveService = new ArchiveService();
         upgraderRepository.add("git", new GitUpgrader(git, composer, this.logger));
         upgraderRepository.add("composer-project", new ComposerProjectUpgrader(composer, this.logger));
+        upgraderRepository.add("github-release", new GithubReleaseUpgrader(this.logger, githubApi, archiveService));
 
         receiptRepo.add("laravel", new LaravelReceipt(this.logger));
     }
