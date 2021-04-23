@@ -31,6 +31,7 @@ elephant init
 
 * [Git](#git)
 * [Composer Project](#composer-project)
+* [Github Release](#github-release)
 
 The last thing will be to make a first deploy. For that follow instructions in [upgrade](#upgrade) section.
 
@@ -112,6 +113,22 @@ Deploy project from composer project.
 ```
 
 This source will download the newest version of project in composer. Composer is executed with cache off, so the composer should download the newest version. Bare in mind, that sometimes it takes a few minutes to propagate new version of a project from composer server to your machine.
+
+### Github Release
+
+Deploy project from github release.
+
+```json
+{
+    "source":{
+        "type":"github-release",
+        "repository":"owner/repository-name",
+        "asset":"filename.zip"
+    }
+}
+```
+
+This source will check the latest release version via github API and download asset specified in the source config. Asset has to be only one `.zip` file. This will be unziped into releases directory. This source method can be very usefull for deploying frontend bundles (HTML, CSS and JS).
 
 ## Configuration
 
