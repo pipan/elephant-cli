@@ -45,7 +45,7 @@ public class AppBootstrap extends Bootstrap {
     public AppBootstrap(FilesystemFactory filesystemFactory, Shell shell) {
         this.filesystemFactory = filesystemFactory;
         this.shell = shell;
-        this.logger = new SystemLogger();
+        this.logger = new SystemLogger(14);
 
         this.workingDirectoryFactory = new WorkingDirectoryFactory(this.filesystemFactory);
         this.upgraderRepository = new UpgraderRepository();

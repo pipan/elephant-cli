@@ -31,7 +31,7 @@ public class GithubReleaseUpgrader implements Upgrader {
 
     public boolean upgrade(Directory dir, ElephantConfig config) throws Exception {    
         GithubReleaseSourceConfig gitConfig = new GithubReleaseSourceConfig(config.getSource());
-        this.logger.info("Fetching version list from github");
+        this.logger.info("Checking available versions");
 
         JSONArray json = this.api.releases(gitConfig.getRepository());
         if (json.length() == 0) {
@@ -39,11 +39,10 @@ public class GithubReleaseUpgrader implements Upgrader {
             return false;    
         }
         String version = json.getJSONObject(0).getString("tag_name");
-        this.logger.info("Latest version is " + version);
-        this.logger.info("Downloading asset");
+        this.logger.info("Downloading assets for version: " + version);
         InputStream assetFile = new URL("https://github.com/" + gitConfig.getRepository() + "/releases/download/" + version + "/" + gitConfig.getAsset()).openStream();
 
-        this.logger.info("Extracting asset");
+        this.logger.info("Extracting assets");
         this.archiveService.extract(assetFile, dir.getAbsolutePath());
         return true;
     }

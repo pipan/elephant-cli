@@ -138,6 +138,6 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
         this.shell.assertPrintCount(1);
         this.shell.assertPrint(0, "Upgrade successful");
 
-        this.shell.assertExecuted("sudo systemctl reload php-fpm7.3");
+        this.shell.assertExecuted("sudo systemctl reload php7.3-fpm");
     }
 }

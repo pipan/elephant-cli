@@ -132,6 +132,6 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"rollback"}).assertOk("");
 
-        this.shell.assertExecuted("sudo systemctl reload php-fpm7.3");
+        this.shell.assertExecuted("sudo systemctl reload php7.3-fpm");
     }
 }
