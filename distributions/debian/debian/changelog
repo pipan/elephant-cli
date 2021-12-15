@@ -1,3 +1,9 @@
+elephant (0.2.1) focal; urgency=medium
+
+  * enable detailed console output
+
+ -- Peter Gasparik <gasparik.pe@gmail.com>  Wed, 15 Dec 2021 22:00:00 +0100
+
 elephant (0.2.0) focal; urgency=medium
 
   * increase required java version to 11
