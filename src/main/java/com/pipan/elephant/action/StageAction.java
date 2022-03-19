@@ -56,7 +56,7 @@ public class StageAction {
         
         boolean result = upgrader.upgrade(releaseDir, config);
         if (!result) {
-            throw new StageException("Upgrade failed: unknown error");
+            throw new StageException("Upgrade failed");
         }
         // if (!releaseDir.exists()) {
         //     return CommandResult.fail("Upgrade was not successful");

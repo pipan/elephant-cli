@@ -27,11 +27,11 @@ public class SimpleShell implements Shell {
         Integer resultCode = p.waitFor();
         String error = new String(p.getErrorStream().readAllBytes(), "UTF-8");
         
-        if (resultCode > 0 || error.length() > 0) {
+        if (resultCode > 0) {
             if (error.endsWith(System.lineSeparator())) {
                 error = error.substring(0, error.length() - 1);
             }
-            throw new InterruptedException(resultCode.toString() + " " + error);
+            throw new InterruptedException(error);
         }
     }
 

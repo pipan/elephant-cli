@@ -10,10 +10,10 @@ public class ComposerService {
     }
 
     public void install(String directory) throws Exception {
-        this.shell.runWithException("composer", "install", "--no-dev", "-o", "-d", "-q", directory);
+        this.shell.runWithException("composer", "-q", "install", "--no-dev", "-o", "-d", directory);
     }
 
     public void createProject(String packageName, String directory) throws Exception {
-        this.shell.runWithException("composer", "create-project", "--no-cache", "--no-dev", "--prefer-dist", "--no-progress", "-q", packageName, directory);
+        this.shell.runWithException("composer", "-q", "create-project", "--no-cache", "--no-dev", "--prefer-dist", "--no-progress", packageName, directory);
     }
 }

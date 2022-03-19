@@ -16,6 +16,6 @@ public class ComposerProjectIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"stage"}).assertOk("");
 
-        this.shell.assertExecuted("composer create-project --no-cache --no-dev --prefer-dist --no-progress -q package/name releases/1");
+        this.shell.assertExecuted("composer -q create-project --no-cache --no-dev --prefer-dist --no-progress package/name releases/1");
     }
 }
