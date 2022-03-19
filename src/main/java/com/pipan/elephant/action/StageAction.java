@@ -6,7 +6,7 @@ import com.pipan.elephant.cleaner.UnusedStageCleaner;
 import com.pipan.elephant.generator.IncrementalDirectoryGenerator;
 import com.pipan.elephant.hook.Hook;
 import com.pipan.elephant.hook.HookChain;
-import com.pipan.elephant.log.Logger;
+import com.pipan.elephant.output.ConsoleOutput;
 import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.repository.Repository;
 import com.pipan.elephant.shell.Shell;
@@ -22,14 +22,14 @@ import com.pipan.filesystem.Filesystem;
 public class StageAction {
     protected UpgraderRepository upgraderRepository;
     protected Shell shell;
-    protected Logger logger;
     protected Repository<Receipt> receiptRepo;
+    private ConsoleOutput output;
 
-    public StageAction(UpgraderRepository upgraderRepository, Shell shell, Logger logger, Repository<Receipt> receiptRepo) {
+    public StageAction(UpgraderRepository upgraderRepository, Shell shell, Repository<Receipt> receiptRepo) {
         this.upgraderRepository = upgraderRepository;
         this.shell = shell;
-        this.logger = logger;
         this.receiptRepo = receiptRepo;
+        this.output = new ConsoleOutput();
     }
 
     public void stage(WorkingDirectory workingDirectory) throws Exception {
@@ -44,11 +44,11 @@ public class StageAction {
         if (receiptName != null && !receiptName.isEmpty()) {
             receipt = this.receiptRepo.get(config.getReceipt());
             if (receipt == null) {
-                this.logger.warning("Receipt unknown '" + receiptName + "'");
+                this.output.write("<yellow>Unknown receipt " + receiptName + "</yellow>");
             }
         }
 
-        ActionHooks actionHooks = new ActionHooks("stage", this.shell, logger, receipt);
+        ActionHooks actionHooks = new ActionHooks("stage", this.shell, new ConsoleOutput(), receipt);
 
         actionHooks.dispatchBefore(workingDirectory);
         Directory releaseDir = (new IncrementalDirectoryGenerator(workingDirectory)).next();

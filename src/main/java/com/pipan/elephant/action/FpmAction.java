@@ -6,7 +6,7 @@ import com.pipan.elephant.cleaner.UnusedStageCleaner;
 import com.pipan.elephant.generator.IncrementalDirectoryGenerator;
 import com.pipan.elephant.hook.Hook;
 import com.pipan.elephant.hook.HookChain;
-import com.pipan.elephant.log.Logger;
+import com.pipan.elephant.output.ConsoleOutput;
 import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.repository.Repository;
 import com.pipan.elephant.service.ApacheService;
@@ -22,11 +22,11 @@ import com.pipan.filesystem.Filesystem;
 
 public class FpmAction {
     protected ApacheService apacheService;
-    protected Logger logger;
+    protected ConsoleOutput output;
 
-    public FpmAction(ApacheService apacheService, Logger logger) {
+    public FpmAction(ApacheService apacheService, ConsoleOutput output) {
         this.apacheService = apacheService;
-        this.logger = logger;
+        this.output = output;
     }
 
     public void run(ElephantConfig config) throws Exception {
@@ -36,9 +36,15 @@ public class FpmAction {
         }
 
         if (fpmConfig.getCommand().equals("reload")) {
-            this.logger.info("Reloading php fpm");
-            this.apacheService.reloadFpm(fpmConfig.getVersion());
-            this.logger.info("Reloading php fpm: done");
+            this.output.write("[...] Reloading php fpm");
+            try {
+                this.apacheService.reloadFpm(fpmConfig.getVersion());
+            } catch (InterruptedException ex) {
+                this.output.rewrite("[<red> x </red>] Reloading php fpm: <red>" + ex.getMessage() + "</red>");
+                return;
+            }
+            
+            this.output.rewrite("[<green> ✔️ </green>] Reloading php fpm");
             return;
         }
     }

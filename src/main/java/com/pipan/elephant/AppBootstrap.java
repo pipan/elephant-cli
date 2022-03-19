@@ -26,9 +26,7 @@ import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
 import com.pipan.filesystem.FilesystemFactory;
 import com.pipan.elephant.exceptionhandler.PrintExceptionHandler;
 import com.pipan.elephant.github.GithubApi;
-import com.pipan.elephant.log.Logger;
-import com.pipan.elephant.log.SystemLogger;
-import com.pipan.elephant.middleware.VerboseLoggerMiddleware;
+import com.pipan.elephant.output.ConsoleOutput;
 import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.receipt.laravel.LaravelReceipt;
 import com.pipan.elephant.repository.MapRepository;
@@ -40,12 +38,12 @@ public class AppBootstrap extends Bootstrap {
     private Shell shell;
     private FilesystemFactory filesystemFactory;
     private WorkingDirectoryFactory workingDirectoryFactory;
-    private SystemLogger logger;
+    private ConsoleOutput output;
 
     public AppBootstrap(FilesystemFactory filesystemFactory, Shell shell) {
         this.filesystemFactory = filesystemFactory;
         this.shell = shell;
-        this.logger = new SystemLogger(14);
+        this.output = new ConsoleOutput();
 
         this.workingDirectoryFactory = new WorkingDirectoryFactory(this.filesystemFactory);
         this.upgraderRepository = new UpgraderRepository();
@@ -55,30 +53,25 @@ public class AppBootstrap extends Bootstrap {
         ComposerService composer = new ComposerService(this.shell);
         GithubApi githubApi = new GithubApi();
         ArchiveService archiveService = new ArchiveService();
-        upgraderRepository.add("git", new GitUpgrader(git, composer, this.logger));
-        upgraderRepository.add("composer-project", new ComposerProjectUpgrader(composer, this.logger));
-        upgraderRepository.add("github-release", new GithubReleaseUpgrader(this.logger, githubApi, archiveService));
+        upgraderRepository.add("git", new GitUpgrader(git, composer));
+        upgraderRepository.add("composer-project", new ComposerProjectUpgrader(composer));
+        upgraderRepository.add("github-release", new GithubReleaseUpgrader(this.output, githubApi, archiveService));
 
-        receiptRepo.add("laravel", new LaravelReceipt(this.logger));
+        receiptRepo.add("laravel", new LaravelReceipt());
     }
 
     @Override
     public void route(RouteContext context) {
-        context.addRoute(Arrays.asList("help", "-h", "--help"), new HelpController(this.shell));
-        context.addRoute("init", new InitController(this.workingDirectoryFactory, this.shell, this.logger));
-        context.addRoute("stage", new StageController(this.workingDirectoryFactory, this.shell, this.logger, this.upgraderRepository, this.receiptRepo));
-        context.addRoute("upgrade", new UpgradeController(this.workingDirectoryFactory, this.shell, this.upgraderRepository, this.logger, this.receiptRepo));
-        context.addRoute("rollback", new RollbackController(this.workingDirectoryFactory, this.shell, this.logger));
+        context.addRoute(Arrays.asList("help", "-h", "--help"), new HelpController(this.shell, this.output));
+        context.addRoute("init", new InitController(this.workingDirectoryFactory, this.output));
+        context.addRoute("stage", new StageController(this.workingDirectoryFactory, this.shell, this.upgraderRepository, this.receiptRepo, this.output));
+        context.addRoute("upgrade", new UpgradeController(this.workingDirectoryFactory, this.shell, this.upgraderRepository, this.receiptRepo, this.output));
+        context.addRoute("rollback", new RollbackController(this.workingDirectoryFactory, this.shell, this.output));
         context.addRoute("status", new StatusController(this.workingDirectoryFactory, this.shell));
     }
 
     @Override
     public void exceptionHandler(ExceptionHandlerContext context) {
         context.addExceptionHandler(new PrintExceptionHandler(this.shell));
-    }
-
-    @Override
-    public void middleware(MiddlewareContext context) {
-        context.addMiddleware(new VerboseLoggerMiddleware(this.logger));
     }
 }

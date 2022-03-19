@@ -14,8 +14,8 @@ import com.pipan.elephant.config.ElephantConfigFactory;
 import com.pipan.elephant.hook.Hook;
 import com.pipan.elephant.hook.HookChain;
 import com.pipan.elephant.hook.FileHook;
-import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.middleware.ValidateElephantFileMiddleware;
+import com.pipan.elephant.output.ConsoleOutput;
 import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.repository.Repository;
@@ -29,19 +29,19 @@ import com.pipan.filesystem.Filesystem;
 public class UpgradeController extends ControllerWithMiddlewares {
     private WorkingDirectoryFactory workingDirectoryFactory;
     private Shell shell;
-    private Logger logger;
     private FpmAction fpmAction;
     private StageAction stageAction;
     private ActionHooks actionHooks;
+    private ConsoleOutput output;
 
-    public UpgradeController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, UpgraderRepository upgraderRepository, Logger logger, Repository<Receipt> receiptRepo) {
+    public UpgradeController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, UpgraderRepository upgraderRepository, Repository<Receipt> receiptRepo, ConsoleOutput output) {
         super();
         this.workingDirectoryFactory = workingDirectoryFactory;
         this.shell = shell;
-        this.logger = logger;
-        this.fpmAction = new FpmAction(new ApacheService(shell), this.logger);
-        this.stageAction = new StageAction(upgraderRepository, this.shell, this.logger, receiptRepo);
-        this.actionHooks = new ActionHooks("upgrade", this.shell, this.logger);
+        this.output = output;
+        this.fpmAction = new FpmAction(new ApacheService(shell), this.output);
+        this.stageAction = new StageAction(upgraderRepository, this.shell, receiptRepo);
+        this.actionHooks = new ActionHooks("upgrade", this.shell, this.output);
 
         this.withMiddleware(new ValidateElephantFileMiddleware(this.workingDirectoryFactory, this.shell));
     }
@@ -52,31 +52,28 @@ public class UpgradeController extends ControllerWithMiddlewares {
         Releases releases = new Releases(workingDirectory);
 
         if (!releases.isStageAhead()) {
-            this.logger.info("Stage new version");
             this.stageAction.stage(workingDirectory);
-            this.logger.info("Stage new version: done");
         }
 
         this.actionHooks.dispatchBefore(workingDirectory);
 
-        this.logger.info("Set production link");
+        this.output.write("[...] Activate next version");
         workingDirectory.getProductionLink().setTarget(
             workingDirectory.getStageLink().getTargetDirectory().getAbsolutePath()
         );
-        this.logger.info("Set production link: done");
+        this.output.rewrite("[<green> ✔️ </green>] Activate next version");
 
         ElephantConfig config = (new ElephantConfigFactory()).create(workingDirectory.getConfigFile());
         
         this.fpmAction.run(config);
 
-        this.logger.info("Remove unused upgrades");
-        
+        this.output.write("[...] Remove unused upgrades");
         (new RollbackLimitCleaner(workingDirectory, config.getHistoryLimit())).clean();
-        this.logger.info("Remove unused upgrades: done");
+        this.output.rewrite("[<green> ✔️ </green>] Remove unused upgrades");
 
         this.actionHooks.dispatchAfter(workingDirectory);
 
-        this.shell.out("Upgrade successful");
+        this.output.write("<green>Upgrade successful</green>");
         return CommandResult.ok();
     }
 }
