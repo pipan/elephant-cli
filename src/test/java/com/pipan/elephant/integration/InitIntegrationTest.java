@@ -12,9 +12,6 @@ public class InitIntegrationTest extends IntegrationTestCase {
         this.filesystemSeeder.empty(this.filesystem);
         this.run(new String[] {"init"}).assertOk("");
 
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Initialization successful");
-
         this.filesystem.assertFileExists("elephant.json");
         this.filesystem.assertFileContent("elephant.json", Resource.getContent("template/elephant.json"));
 

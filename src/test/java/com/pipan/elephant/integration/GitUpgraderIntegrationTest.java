@@ -16,7 +16,7 @@ public class GitUpgraderIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"stage"}).assertOk("");
 
-        this.shell.assertExecuted("git clone https://git.url.test/repo releases/1");
+        this.shell.assertExecuted("git clone -q https://git.url.test/repo releases/1");
     }
 
     @Test
@@ -26,7 +26,7 @@ public class GitUpgraderIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"stage"}).assertOk("");
 
-        this.shell.assertExecuted("git clone https://git.url.test/repo releases/1");
-        this.shell.assertExecuted("composer install --no-dev -o -d releases/1");
+        this.shell.assertExecuted("git clone -q https://git.url.test/repo releases/1");
+        this.shell.assertExecuted("composer install --no-dev -o -d -q releases/1");
     }
 }

@@ -46,9 +46,6 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"upgrade"}).assertOk("");
 
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Upgrade successful");
-
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/1");
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/1");
         this.shell.assertExecuted("sudo systemctl reload php-fpm");
@@ -109,9 +106,6 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"upgrade"}).assertOk("");
 
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Upgrade successful");
-
         ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("1");
     }
 
@@ -122,9 +116,6 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"upgrade"}).assertOk("");
 
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Upgrade successful");
-
         this.shell.assertNotExecuted("sudo systemctl reload php-fpm");
     }
 
@@ -134,9 +125,6 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
         this.filesystem.getFile("elephant.json").write(Resource.getContent("template/elephant_fpm_version.json"));
 
         this.run(new String[] {"upgrade"}).assertOk("");
-
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Upgrade successful");
 
         this.shell.assertExecuted("sudo systemctl reload php7.3-fpm");
     }

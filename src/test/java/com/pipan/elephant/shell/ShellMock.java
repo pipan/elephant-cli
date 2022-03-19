@@ -9,14 +9,12 @@ import org.junit.jupiter.api.Assertions;
 
 public class ShellMock implements Shell{
     private Map<String, Exception> exceptions;
-    private Map<String, Boolean> responses;
     private Map<String, Integer> calls;
     private List<String> prints;
     private List<String> errorPrints;
 
     public ShellMock() {
         this.exceptions = new Hashtable<>();
-        this.responses = new Hashtable<>();
         this.calls = new Hashtable<>();
         this.prints = new LinkedList<>();
         this.errorPrints = new LinkedList<>();
@@ -24,11 +22,6 @@ public class ShellMock implements Shell{
 
     public ShellMock withException(String cmd, Exception ex) {
         this.exceptions.put(cmd, ex);
-        return this;
-    }
-
-    public ShellMock withResponse(String cmd, Boolean response) {
-        this.responses.put(cmd, response);
         return this;
     }
 
@@ -87,28 +80,24 @@ public class ShellMock implements Shell{
     @Override
     public boolean run(String cmd) {
         try {
-            return this.runWithException(cmd);
+            this.runWithException(cmd);
+            return true;
         } catch (Exception ex) {
             return false;
         }
     }
 
     @Override
-    public boolean runWithException(String cmd) throws Exception {
+    public void runWithException(String cmd) throws Exception {
         this.calls.put(cmd, this.calls.getOrDefault(cmd, 0) + 1);
 
         if (this.exceptions.containsKey(cmd)) {
             throw this.exceptions.get(cmd);
         }
-
-        if (!this.responses.containsKey(cmd)) {
-            return true;
-        }
-        return this.responses.get(cmd);
     }
 
     @Override
-    public boolean runWithException(String... cmd) throws Exception {
-        return this.runWithException(String.join(" ", cmd));
+    public void runWithException(String... cmd) throws Exception {
+        this.runWithException(String.join(" ", cmd));
     }
 }
