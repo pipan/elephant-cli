@@ -9,6 +9,6 @@ Deploy to PPA Launchpad
 5. update debian changelog file `distributions/debian/debian/changelog`
 6. create debian source `debuild -S`. You have to `cd distributions/debian` first
 7. *Optional* sign changes `debsign -k <PGP_KEY_ID> file.changes`
-8. upload to PPA `dput ppa:gipn/elephant elephant_<version>_source.changes` from `distributions` directory
+8. upload to PPA `dput ppa:gipn/elephant elephant_<version>_source.changes` from `distributions` directory. You have to `cd ../`.
 
 > If you want to only create debian package, `.deb` file, use `debuild -uc -us`
