@@ -9,11 +9,11 @@ public class ComposerService {
         this.shell = shell;
     }
 
-    public boolean install(String directory) throws Exception {
-        return this.shell.runWithException("composer", "install", "--no-dev", "-o", "-d", directory);
+    public void install(String directory) throws Exception {
+        this.shell.runWithException("composer", "install", "--no-dev", "-o", "-d", "-q", directory);
     }
 
-    public boolean createProject(String packageName, String directory) throws Exception {
-        return this.shell.runWithException("composer", "create-project", "--no-cache", "--no-dev", "--prefer-dist", packageName, directory);
+    public void createProject(String packageName, String directory) throws Exception {
+        this.shell.runWithException("composer", "create-project", "--no-cache", "--no-dev", "--prefer-dist", "--no-progress", "-q", packageName, directory);
     }
 }

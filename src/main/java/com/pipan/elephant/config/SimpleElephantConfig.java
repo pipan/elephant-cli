@@ -17,7 +17,15 @@ public class SimpleElephantConfig implements ElephantConfig {
             this.receipt = json.getString("receipt");
         }
         if (json.has("fpm")) {
-            this.fpm = json.getJSONObject("fpm");
+            Object fpmObject = json.get("fpm");
+            if (fpmObject instanceof JSONObject) {
+                this.fpm = json.getJSONObject("fpm");
+            } else if (fpmObject instanceof Boolean) {
+                this.fpm = new JSONObject();
+                this.fpm.put("command", "");
+                this.fpm.put("version", "");
+            }
+            
         }
     }
 

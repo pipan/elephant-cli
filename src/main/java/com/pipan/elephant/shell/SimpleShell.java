@@ -13,21 +13,29 @@ public class SimpleShell implements Shell {
 
     public boolean run(String cmd) {
         try {
-            return this.runWithException(cmd);
+            this.runWithException(cmd);
         } catch (IOException | InterruptedException ex) {
             return false;
         }
+        return true;
     }
 
-    public boolean runWithException(String... cmd) throws IOException, InterruptedException {
+    public void runWithException(String... cmd) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
         Process p = pb.start();
-        return p.waitFor() == 0;
+
+        Integer resultCode = p.waitFor();
+        String error = new String(p.getErrorStream().readAllBytes(), "UTF-8");
+        
+        if (resultCode > 0 || error.length() > 0) {
+            if (error.endsWith(System.lineSeparator())) {
+                error = error.substring(0, error.length() - 1);
+            }
+            throw new InterruptedException(resultCode.toString() + " " + error);
+        }
     }
 
-    public boolean runWithException(String cmd) throws IOException, InterruptedException {
-        return this.runWithException(new String[] {cmd});
+    public void runWithException(String cmd) throws IOException, InterruptedException {
+        this.runWithException(new String[] {cmd});
     }
 }

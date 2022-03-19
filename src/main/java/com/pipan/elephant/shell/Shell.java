@@ -4,6 +4,6 @@ public interface Shell {
     public void out(String message);
     public void err(String message);
     public boolean run(String cmd);
-    public boolean runWithException(String cmd) throws Exception;
-    public boolean runWithException(String... cmd) throws Exception;
+    public void runWithException(String cmd) throws Exception;
+    public void runWithException(String... cmd) throws Exception;
 }

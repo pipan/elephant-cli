@@ -25,9 +25,6 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"rollback"}).assertOk("");
 
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Rollback successful");
-
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/1");
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/2");
     }
@@ -38,9 +35,6 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
         this.filesystem.getFile("elephant.json").write(Resource.getContent("template/elephant_invalid_source.json"));
 
         this.run(new String[] {"rollback"}).assertOk("");
-
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Rollback successful");
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/1");
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/2");
@@ -61,9 +55,6 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
         this.filesystemSeeder.upgrade(this.filesystem, 2);
 
         this.run(new String[] {"rollback"}).assertOk("");
-
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Rollback successful");
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/1");
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/2");
@@ -91,9 +82,6 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"rollback"}).assertOk("");
 
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Rollback successful");
-
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/3");
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/4");
         this.shell.assertExecuted("sudo systemctl reload php-fpm");
@@ -105,9 +93,6 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
         this.filesystemSeeder.addStage(this.filesystem, "5");
 
         this.run(new String[] {"rollback"}).assertOk("");
-
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Rollback successful");
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/3");
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/5");

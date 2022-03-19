@@ -46,9 +46,6 @@ public class StageIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"stage"}).assertOk("");
 
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Stage successful");
-
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/1");
     }
 
@@ -71,9 +68,6 @@ public class StageIntegrationTest extends IntegrationTestCase {
 
         this.run(new String[] {"stage"}).assertOk("");
 
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Stage successful");
-
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/3");
         ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("2");
     }
@@ -84,9 +78,6 @@ public class StageIntegrationTest extends IntegrationTestCase {
         this.filesystemSeeder.setStage(this.filesystem, "1");
 
         this.run(new String[] {"stage"}).assertOk("");
-
-        this.shell.assertPrintCount(1);
-        this.shell.assertPrint(0, "Stage successful");
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/3");
     }

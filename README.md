@@ -72,10 +72,6 @@ This command will call [rollback.before](#rollback-before) and [rollback.after](
 
 ### Options
 
-**Verbose output**
-
-Every command can run with `--verbose` swithc, which will output detailed information about current processes. Use it to debug unexpected behavior.
-
 **Run Elephant from Different Directory**
 
 You will usualyy run elephant command inside the project you want to deploy. However, you may wish to run elephant command from different directory. To set the working directory use `-d=/path/to/project` swich with absolute path to project.

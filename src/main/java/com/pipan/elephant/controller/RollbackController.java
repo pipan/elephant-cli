@@ -8,7 +8,7 @@ import com.pipan.elephant.action.FpmAction;
 import com.pipan.elephant.cleaner.UnusedStageCleaner;
 import com.pipan.elephant.config.ElephantConfig;
 import com.pipan.elephant.config.ElephantConfigFactory;
-import com.pipan.elephant.log.Logger;
+import com.pipan.elephant.output.ConsoleOutput;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.service.ApacheService;
 import com.pipan.elephant.shell.Shell;
@@ -20,16 +20,16 @@ public class RollbackController extends ControllerWithMiddlewares {
     protected WorkingDirectoryFactory workingDirectoryFactory;
     protected Shell shell;
     protected FpmAction fpmAction;
-    protected Logger logger;
     protected ActionHooks actionHooks;
+    private ConsoleOutput output;
 
-    public RollbackController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, Logger logger) {
+    public RollbackController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, ConsoleOutput output) {
         super();
         this.workingDirectoryFactory = workingDirectoryFactory;
         this.shell = shell;
-        this.logger = logger;
-        this.fpmAction = new FpmAction(new ApacheService(shell), this.logger);
-        this.actionHooks = new ActionHooks("rollback", this.shell, this.logger);
+        this.output = output;
+        this.fpmAction = new FpmAction(new ApacheService(shell), output);
+        this.actionHooks = new ActionHooks("rollback", this.shell, output);
     }
 
     @Override
@@ -49,9 +49,9 @@ public class RollbackController extends ControllerWithMiddlewares {
 
         this.actionHooks.dispatchBefore(workingDirectory);
 
-        this.logger.info("Set production link");
+        this.output.write("[...] Activate previous version");
         workingDirectory.getProductionLink().setTarget(previous.getAbsolutePath());
-        this.logger.info("Set production link: done");
+        this.output.rewrite("[<green> ✔️ </green>] Activate previous version");
 
         this.fpmAction.run(config);
 
@@ -59,7 +59,7 @@ public class RollbackController extends ControllerWithMiddlewares {
 
         this.actionHooks.dispatchAfter(workingDirectory);
 
-        this.shell.out("Rollback successful");
+        this.output.write("<green>Rollback successful</green>");
         return CommandResult.ok();
     }
 }

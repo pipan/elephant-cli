@@ -4,7 +4,7 @@ import com.pipan.cli.command.Command;
 import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
 import com.pipan.elephant.Resource;
-import com.pipan.elephant.log.Logger;
+import com.pipan.elephant.output.ConsoleOutput;
 import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.workingdir.WorkingDirectory;
 import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
@@ -12,32 +12,35 @@ import com.pipan.filesystem.File;
 
 public class InitController implements Controller {
     private WorkingDirectoryFactory workingDirectoryFactory;
-    private Shell shell;
-    private Logger logger;
+    private ConsoleOutput output;
 
-    public InitController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, Logger logger) {
+    public InitController(WorkingDirectoryFactory workingDirectoryFactory, ConsoleOutput output) {
         this.workingDirectoryFactory = workingDirectoryFactory;
-        this.shell = shell;
-        this.logger = logger;
+        this.output = output;
     }
 
     public CommandResult execute(Command command) throws Exception {
         WorkingDirectory workingDirectory = this.workingDirectoryFactory.create(command);
         File config = workingDirectory.getConfigFile();
 
+        this.output.write("[...] Creating elephant file");
         if (!config.exists()) {
-            this.logger.info("Creating elephant file");
             config.write(Resource.getContent("template/elephant.json"));
-            this.logger.info("Creating elephant file: done");
+            this.output.rewrite("[<green> ✔️ </green>] Creating elephant file");
+        } else {
+            this.output.rewrite("[<yellow> - </yellow>] Creating elephant file: <yellow>file already exists.</yellow>");
         }
 
+        this.output.write("[...] Creating releases directory");
         if (!workingDirectory.getReleasesDirectory().exists()) {
-            this.logger.info("Creating releases directory");
             workingDirectory.getReleasesDirectory().make();
-            this.logger.info("Creating releases directory: done");
+            this.output.rewrite("[<green> ✔️ </green>] Creating releases directory");
+        } else {
+            this.output.rewrite("[<yellow> - </yellow>] Creating releases directory: <yellow>release directory already exists.</yellow>");
         }
 
-        this.shell.out("Initialization successful");
+        this.output.write("<green>Initialization finnished</green>");
+        
         return CommandResult.ok();
     }
 }

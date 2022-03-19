@@ -9,7 +9,7 @@ public class GitService {
         this.shell = shell;
     }
 
-    public boolean clone(String url, String directory) throws Exception {
-        return this.shell.runWithException("git", "clone", url, directory);
+    public void clone(String url, String directory) throws Exception {
+        this.shell.runWithException("git", "clone", "-q", url, directory);
     }   
 }

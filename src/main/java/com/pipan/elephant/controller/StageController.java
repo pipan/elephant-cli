@@ -6,8 +6,8 @@ import com.pipan.cli.controller.ControllerWithMiddlewares;
 import com.pipan.elephant.cleaner.Cleaner;
 import com.pipan.elephant.config.ElephantConfig;
 import com.pipan.elephant.config.ElephantConfigFactory;
-import com.pipan.elephant.log.Logger;
 import com.pipan.elephant.middleware.ValidateElephantFileMiddleware;
+import com.pipan.elephant.output.ConsoleOutput;
 import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.repository.Repository;
@@ -21,14 +21,16 @@ import com.pipan.filesystem.Directory;
 
 public class StageController extends ControllerWithMiddlewares {
     private WorkingDirectoryFactory workingDirectoryFactory;
+    private ConsoleOutput output;
     private Shell shell;
     private StageAction stageAction;
 
-    public StageController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, Logger logger, UpgraderRepository upgraderRepository, Repository<Receipt> receiptRepo) {
+    public StageController(WorkingDirectoryFactory workingDirectoryFactory, Shell shell, UpgraderRepository upgraderRepository, Repository<Receipt> receiptRepo, ConsoleOutput output) {
         super();
         this.workingDirectoryFactory = workingDirectoryFactory;
         this.shell = shell;
-        this.stageAction = new StageAction(upgraderRepository, this.shell, logger, receiptRepo);
+        this.output = output;
+        this.stageAction = new StageAction(upgraderRepository, this.shell, receiptRepo);
 
         this.withMiddleware(new ValidateElephantFileMiddleware(this.workingDirectoryFactory, this.shell));
     }
@@ -39,7 +41,7 @@ public class StageController extends ControllerWithMiddlewares {
 
         this.stageAction.stage(workingDirectory);
         
-        this.shell.out("Stage successful");
+        this.output.write("<green>Stage successful</green>");
         return CommandResult.ok();
     }
 }
