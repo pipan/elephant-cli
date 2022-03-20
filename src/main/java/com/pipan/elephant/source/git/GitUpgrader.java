@@ -23,14 +23,12 @@ public class GitUpgrader implements Upgrader {
         GitSourceConfig gitConfig = new GitSourceConfig(config.getSource());
         this.output.write("[...] Cloning repository");
         try {
-            this.git.clone(gitConfig.getUrl(), dir.getAbsolutePath());
+            this.git.clone(gitConfig.getUrl(), dir.getAbsolutePath(), gitConfig.getBranch());
         } catch (Exception ex) {
             this.output.rewrite("[<red> " + Emoji.CROSS + " </red>] Cloning repository: <red>" + ex.getMessage() + "</red>");
             return false;
         }
         this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Cloning repository");
-        
-        // todo checkout specific branch
 
         if (gitConfig.hasComposer()) {
             this.output.write("[...] Installing composer dependencies");

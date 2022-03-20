@@ -1,0 +1,8 @@
+{
+    "source": {
+        "type": "git",
+        "url": "https://git.url.test/repo",
+        "branch": "develop"
+    },
+    "history_limit": 5
+}

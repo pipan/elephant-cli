@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Assertions;
 
@@ -88,6 +89,11 @@ public class ShellMock implements Shell{
     }
 
     @Override
+    public void runWithException(List<String> cmd) throws Exception {
+        this.runWithException(String.join(" ", cmd));
+    }
+
+    @Override
     public void runWithException(String cmd) throws Exception {
         this.calls.put(cmd, this.calls.getOrDefault(cmd, 0) + 1);
 
@@ -98,6 +104,6 @@ public class ShellMock implements Shell{
 
     @Override
     public void runWithException(String... cmd) throws Exception {
-        this.runWithException(String.join(" ", cmd));
+        this.runWithException(Arrays.asList(cmd));
     }
 }

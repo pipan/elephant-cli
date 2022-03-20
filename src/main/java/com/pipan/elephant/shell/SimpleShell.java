@@ -1,6 +1,8 @@
 package com.pipan.elephant.shell;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class SimpleShell implements Shell {
     public void out(String message) {
@@ -20,7 +22,7 @@ public class SimpleShell implements Shell {
         return true;
     }
 
-    public void runWithException(String... cmd) throws IOException, InterruptedException {
+    public void runWithException(List<String> cmd) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         Process p = pb.start();
 
@@ -33,6 +35,10 @@ public class SimpleShell implements Shell {
             }
             throw new InterruptedException(error);
         }
+    }
+
+    public void runWithException(String... cmd) throws IOException, InterruptedException {
+        this.runWithException(Arrays.asList(cmd));
     }
 
     public void runWithException(String cmd) throws IOException, InterruptedException {
