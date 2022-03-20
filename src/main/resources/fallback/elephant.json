@@ -6,5 +6,6 @@
     "fpm": {
         "command":"reload",
         "version":""
-    }
+    },
+    "nginx": false
 }

@@ -7,6 +7,7 @@ import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.ControllerWithMiddlewares;
 import com.pipan.elephant.action.ActionHooks;
 import com.pipan.elephant.action.FpmAction;
+import com.pipan.elephant.action.NginxAction;
 import com.pipan.elephant.action.StageAction;
 import com.pipan.elephant.cleaner.RollbackLimitCleaner;
 import com.pipan.elephant.config.ElephantConfig;
@@ -21,6 +22,7 @@ import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.repository.Repository;
 import com.pipan.elephant.service.ApacheService;
+import com.pipan.elephant.service.NginxService;
 import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.source.UpgraderRepository;
 import com.pipan.elephant.workingdir.WorkingDirectory;
@@ -31,6 +33,7 @@ public class UpgradeController extends ControllerWithMiddlewares {
     private WorkingDirectoryFactory workingDirectoryFactory;
     private Shell shell;
     private FpmAction fpmAction;
+    private NginxAction nginxAction;
     private StageAction stageAction;
     private ActionHooks actionHooks;
     private ConsoleOutput output;
@@ -41,6 +44,7 @@ public class UpgradeController extends ControllerWithMiddlewares {
         this.shell = shell;
         this.output = output;
         this.fpmAction = new FpmAction(new ApacheService(shell), this.output);
+        this.nginxAction = new NginxAction(new NginxService(shell), this.output);
         this.stageAction = new StageAction(upgraderRepository, this.shell, receiptRepo);
         this.actionHooks = new ActionHooks("upgrade", this.shell, this.output);
 
@@ -67,6 +71,7 @@ public class UpgradeController extends ControllerWithMiddlewares {
         ElephantConfig config = (new ElephantConfigFactory()).create(workingDirectory.getConfigFile());
         
         this.fpmAction.run(config);
+        this.nginxAction.run(config);
 
         this.output.write("[...] Remove unused upgrades");
         (new RollbackLimitCleaner(workingDirectory, config.getHistoryLimit())).clean();

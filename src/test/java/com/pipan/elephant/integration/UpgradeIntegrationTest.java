@@ -128,4 +128,14 @@ public class UpgradeIntegrationTest extends IntegrationTestCase {
 
         this.shell.assertExecuted("sudo systemctl reload php7.3-fpm");
     }
+
+    @Test
+    public void testUpgradeNginx() throws Exception {
+        this.filesystemSeeder.initializeElephant(this.filesystem);
+        this.filesystem.getFile("elephant.json").write(Resource.getContent("template/elephant_nginx.json"));
+
+        this.run(new String[] {"upgrade"}).assertOk("");
+
+        this.shell.assertExecuted("sudo systemctl reload nginx");
+    }
 }

@@ -8,6 +8,7 @@ public class SimpleElephantConfig implements ElephantConfig {
     protected String sourceType;
     protected Integer historyLimit;
     protected String receipt;
+    protected Boolean nginx = false;
 
     public SimpleElephantConfig(JSONObject json) {
         this.historyLimit = json.getInt("history_limit");
@@ -24,8 +25,10 @@ public class SimpleElephantConfig implements ElephantConfig {
                 this.fpm = new JSONObject();
                 this.fpm.put("command", "");
                 this.fpm.put("version", "");
-            }
-            
+            } 
+        }
+        if (json.has("nginx")) {
+            this.nginx = json.getBoolean("nginx");
         }
     }
 
@@ -47,5 +50,9 @@ public class SimpleElephantConfig implements ElephantConfig {
 
     public JSONObject getFpm() {
         return this.fpm;
+    }
+
+    public Boolean getNginx() {
+        return this.nginx;
     }
 }

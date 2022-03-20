@@ -8,4 +8,5 @@ public interface ElephantConfig {
     public String getReceipt();
     public JSONObject getSource();
     public JSONObject getFpm();
+    public Boolean getNginx();
 }

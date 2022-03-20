@@ -1,25 +1,10 @@
 package com.pipan.elephant.action;
 
-import java.util.Arrays;
-
-import com.pipan.elephant.cleaner.UnusedStageCleaner;
-import com.pipan.elephant.generator.IncrementalDirectoryGenerator;
-import com.pipan.elephant.hook.Hook;
-import com.pipan.elephant.hook.HookChain;
 import com.pipan.elephant.output.ConsoleOutput;
 import com.pipan.elephant.output.Emoji;
-import com.pipan.elephant.receipt.Receipt;
-import com.pipan.elephant.repository.Repository;
 import com.pipan.elephant.service.ApacheService;
 import com.pipan.elephant.shell.Shell;
-import com.pipan.elephant.hook.FileHook;
 import com.pipan.elephant.config.ElephantConfig;
-import com.pipan.elephant.config.ElephantConfigFactory;
-import com.pipan.elephant.source.Upgrader;
-import com.pipan.elephant.source.UpgraderRepository;
-import com.pipan.elephant.workingdir.WorkingDirectory;
-import com.pipan.filesystem.Directory;
-import com.pipan.filesystem.Filesystem;
 
 public class FpmAction {
     protected ApacheService apacheService;

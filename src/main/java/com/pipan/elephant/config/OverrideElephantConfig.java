@@ -55,4 +55,11 @@ public class OverrideElephantConfig implements ElephantConfig {
         
         return clone;
     }
+
+    public Boolean getNginx() {
+        if (this.config.getNginx() == null) {
+            return this.fallbackConfig.getNginx();
+        }
+        return this.config.getNginx();
+    }
 }
