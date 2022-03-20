@@ -9,6 +9,7 @@ import com.pipan.elephant.cleaner.UnusedStageCleaner;
 import com.pipan.elephant.config.ElephantConfig;
 import com.pipan.elephant.config.ElephantConfigFactory;
 import com.pipan.elephant.output.ConsoleOutput;
+import com.pipan.elephant.output.Emoji;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.service.ApacheService;
 import com.pipan.elephant.shell.Shell;
@@ -51,7 +52,7 @@ public class RollbackController extends ControllerWithMiddlewares {
 
         this.output.write("[...] Activate previous version");
         workingDirectory.getProductionLink().setTarget(previous.getAbsolutePath());
-        this.output.rewrite("[<green> ✔️ </green>] Activate previous version");
+        this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Activate previous version");
 
         this.fpmAction.run(config);
 

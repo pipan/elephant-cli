@@ -5,6 +5,7 @@ import com.pipan.cli.command.CommandResult;
 import com.pipan.cli.controller.Controller;
 import com.pipan.elephant.Resource;
 import com.pipan.elephant.output.ConsoleOutput;
+import com.pipan.elephant.output.Emoji;
 import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.workingdir.WorkingDirectory;
 import com.pipan.elephant.workingdir.WorkingDirectoryFactory;
@@ -26,17 +27,17 @@ public class InitController implements Controller {
         this.output.write("[...] Creating elephant file");
         if (!config.exists()) {
             config.write(Resource.getContent("template/elephant.json"));
-            this.output.rewrite("[<green> ✔️ </green>] Creating elephant file");
+            this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Creating elephant file");
         } else {
-            this.output.rewrite("[<yellow> - </yellow>] Creating elephant file: <yellow>file already exists.</yellow>");
+            this.output.rewrite("[<yellow> ⚠ </yellow>] Creating elephant file: <yellow>file already exists.</yellow>");
         }
 
         this.output.write("[...] Creating releases directory");
         if (!workingDirectory.getReleasesDirectory().exists()) {
             workingDirectory.getReleasesDirectory().make();
-            this.output.rewrite("[<green> ✔️ </green>] Creating releases directory");
+            this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Creating releases directory");
         } else {
-            this.output.rewrite("[<yellow> - </yellow>] Creating releases directory: <yellow>release directory already exists.</yellow>");
+            this.output.rewrite("[<yellow> " + Emoji.WARNING + " </yellow>] Creating releases directory: <yellow>release directory already exists.</yellow>");
         }
 
         this.output.write("<green>Initialization finnished</green>");

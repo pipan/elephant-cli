@@ -7,6 +7,7 @@ import com.pipan.elephant.generator.IncrementalDirectoryGenerator;
 import com.pipan.elephant.hook.Hook;
 import com.pipan.elephant.hook.HookChain;
 import com.pipan.elephant.output.ConsoleOutput;
+import com.pipan.elephant.output.Emoji;
 import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.repository.Repository;
 import com.pipan.elephant.service.ApacheService;
@@ -40,11 +41,11 @@ public class FpmAction {
             try {
                 this.apacheService.reloadFpm(fpmConfig.getVersion());
             } catch (InterruptedException ex) {
-                this.output.rewrite("[<red> x </red>] Reloading php fpm: <red>" + ex.getMessage() + "</red>");
+                this.output.rewrite("[<red> " + Emoji.CROSS + " </red>] Reloading php fpm: <red>" + ex.getMessage() + "</red>");
                 return;
             }
             
-            this.output.rewrite("[<green> ✔️ </green>] Reloading php fpm");
+            this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Reloading php fpm");
             return;
         }
     }

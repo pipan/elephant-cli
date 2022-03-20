@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import com.pipan.elephant.hook.Hook;
 import com.pipan.elephant.output.ConsoleOutput;
+import com.pipan.elephant.output.Emoji;
 import com.pipan.elephant.shell.Shell;
 import com.pipan.elephant.workingdir.WorkingDirectory;
 import com.pipan.filesystem.Directory;
@@ -28,10 +29,10 @@ public class StageAfterHook implements Hook {
         File envFile = workingDirectory.getFilesystem().getFile(".env");
         this.output.write("[...] Copying .env file");
         if (!envFile.exists()) {
-            this.output.rewrite("[<yellow> - </yellow>] Copying .env file: <yellow>file does not exists</yellow>");
+            this.output.rewrite("[<yellow> " + Emoji.WARNING + " </yellow>] Copying .env file: <yellow>file does not exists</yellow>");
         } else {
             Files.copy(Paths.get(envFile.getAbsolutePath()), Paths.get(workingDirectory.getStageLink().getTargetString(), envFile.getName()), StandardCopyOption.REPLACE_EXISTING);
-            this.output.rewrite("[<green> ✔️ </green>] Copying .env file");
+            this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Copying .env file");
         }
 
         Directory stageStorageDir = workingDirectory.getStageLink().getTargetDirectory().enterDir("storage");
@@ -42,16 +43,16 @@ public class StageAfterHook implements Hook {
             try {
                 this.copyDirectory(Paths.get(stageStorageDir.getAbsolutePath()), Paths.get(storageDir.getAbsolutePath()));
             } catch (IOException ex) {
-                this.output.rewrite("[<red> x </red>] Creating storage: <red>" + ex.getMessage() + "</red>");
+                this.output.rewrite("[<red> " + Emoji.CROSS + " </red>] Creating storage: <red>" + ex.getMessage() + "</red>");
                 throw new LaravelReceiptException("Cannot create storage directory", ex);
             }
-            this.output.rewrite("[<green> ✔️ </green>] Creating storage");
+            this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Creating storage");
         }
 
         this.output.write("[...] Linking storage");
         stageStorageDir.delete();
         storageLink.setTarget(storageDir.getAbsolutePath());
-        this.output.rewrite("[<green> ✔️ </green>] Linking storage");
+        this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Linking storage");
     }
 
     private void copyDirectory(Path sourceDir, Path destinationDir) throws IOException {

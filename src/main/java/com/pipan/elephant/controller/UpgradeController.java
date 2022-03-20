@@ -16,6 +16,7 @@ import com.pipan.elephant.hook.HookChain;
 import com.pipan.elephant.hook.FileHook;
 import com.pipan.elephant.middleware.ValidateElephantFileMiddleware;
 import com.pipan.elephant.output.ConsoleOutput;
+import com.pipan.elephant.output.Emoji;
 import com.pipan.elephant.receipt.Receipt;
 import com.pipan.elephant.release.Releases;
 import com.pipan.elephant.repository.Repository;
@@ -61,7 +62,7 @@ public class UpgradeController extends ControllerWithMiddlewares {
         workingDirectory.getProductionLink().setTarget(
             workingDirectory.getStageLink().getTargetDirectory().getAbsolutePath()
         );
-        this.output.rewrite("[<green> ✔️ </green>] Activate next version");
+        this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Activate next version");
 
         ElephantConfig config = (new ElephantConfigFactory()).create(workingDirectory.getConfigFile());
         
@@ -69,7 +70,7 @@ public class UpgradeController extends ControllerWithMiddlewares {
 
         this.output.write("[...] Remove unused upgrades");
         (new RollbackLimitCleaner(workingDirectory, config.getHistoryLimit())).clean();
-        this.output.rewrite("[<green> ✔️ </green>] Remove unused upgrades");
+        this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Remove unused upgrades");
 
         this.actionHooks.dispatchAfter(workingDirectory);
 

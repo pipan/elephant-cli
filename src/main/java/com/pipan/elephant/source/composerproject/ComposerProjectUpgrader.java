@@ -2,6 +2,7 @@ package com.pipan.elephant.source.composerproject;
 
 import com.pipan.elephant.config.ElephantConfig;
 import com.pipan.elephant.output.ConsoleOutput;
+import com.pipan.elephant.output.Emoji;
 import com.pipan.elephant.service.ComposerService;
 import com.pipan.elephant.source.Upgrader;
 import com.pipan.filesystem.Directory;
@@ -23,10 +24,10 @@ public class ComposerProjectUpgrader implements Upgrader {
         try {
             this.composer.createProject(composerConfig.getPackageName(), dir.getAbsolutePath());
         } catch (Exception ex) {
-            this.output.rewrite("[<red> x </red>] Installing composer project: <red>" + ex.getMessage() + "</red>");
+            this.output.rewrite("[<red> " + Emoji.CROSS + " </red>] Installing composer project: <red>" + ex.getMessage() + "</red>");
             return false;
         }
-        this.output.rewrite("[<green> ✔️ </green>] Installing composer project");
+        this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Installing composer project");
         return true;
     }
 }

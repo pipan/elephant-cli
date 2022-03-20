@@ -12,6 +12,7 @@ import com.pipan.elephant.github.GithubApi;
 import com.pipan.elephant.github.ResponseParseException;
 import com.pipan.elephant.github.StatusNotOkException;
 import com.pipan.elephant.output.ConsoleOutput;
+import com.pipan.elephant.output.Emoji;
 import com.pipan.elephant.service.ComposerService;
 import com.pipan.elephant.source.Upgrader;
 import com.pipan.filesystem.Directory;
@@ -38,11 +39,11 @@ public class GithubReleaseUpgrader implements Upgrader {
         try {
             json = this.api.releases(gitConfig.getRepository());    
         } catch (ResponseParseException | StatusNotOkException ex) {
-            this.output.rewrite("[<red> x </red>] Github release: <red>" + ex.getMessage() + "</red>");
+            this.output.rewrite("[<red> " + Emoji.CROSS + " </red>] Github release: <red>" + ex.getMessage() + "</red>");
             return false;
         }
         if (json == null || json.length() == 0) {
-            this.output.rewrite("[<yellow> - </yellow>] Github release: <yellow>No release found for repository " + gitConfig.getRepository() + "</yellow>");
+            this.output.rewrite("[<yellow> " + Emoji.WARNING + " </yellow>] Github release: <yellow>No release found for repository " + gitConfig.getRepository() + "</yellow>");
             return false;    
         }
         String version = json.getJSONObject(0).getString("tag_name");
@@ -51,7 +52,7 @@ public class GithubReleaseUpgrader implements Upgrader {
 
         this.output.rewrite("[...] Github release: Extracting assets for version <blue>" + version + "</blue>");
         this.archiveService.extract(assetFile, dir.getAbsolutePath());
-        this.output.rewrite("[<green> ✔️ </green>] Github release <blue>" + version + "</blue>");
+        this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Github release <blue>" + version + "</blue>");
         return true;
     }
 }
