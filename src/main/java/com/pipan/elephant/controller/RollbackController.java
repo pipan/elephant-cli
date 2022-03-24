@@ -51,7 +51,14 @@ public class RollbackController extends ControllerWithMiddlewares {
         this.actionHooks.dispatchBefore(workingDirectory);
 
         this.output.write("[...] Activate previous version");
+        Boolean stageEqualsProducion = releases.stageEqualsProduction();
+        
         workingDirectory.getProductionLink().setTarget(previous.getAbsolutePath());
+        if (stageEqualsProducion) {
+            workingDirectory.getStageLink().getTargetDirectory().delete();
+            workingDirectory.getStageLink().setTarget(previous.getAbsolutePath());
+        }
+        
         this.output.rewrite("[<green> " + Emoji.CHECK_MARK + " </green>] Activate previous version");
 
         this.fpmAction.run(config);

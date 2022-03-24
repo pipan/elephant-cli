@@ -26,7 +26,8 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
         this.run(new String[] {"rollback"}).assertOk("");
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/1");
-        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/2");
+        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/1");
+        ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("2");
     }
 
     @Test
@@ -37,7 +38,8 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
         this.run(new String[] {"rollback"}).assertOk("");
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/1");
-        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/2");
+        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/1");
+        ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("2");
     }
 
     @Test
@@ -57,7 +59,8 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
         this.run(new String[] {"rollback"}).assertOk("");
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/1");
-        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/2");
+        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/1");
+        ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("2");
         this.shell.assertExecuted("sudo systemctl reload php-fpm");
 
         this.shell.assertNotExecuted("/rollback.before ");
@@ -83,7 +86,8 @@ public class RollbackIntegrationTest extends IntegrationTestCase {
         this.run(new String[] {"rollback"}).assertOk("");
 
         ((SymbolicLinkMock) this.filesystem.getSymbolicLink("production_link")).assertTarget("releases/3");
-        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/4");
+        ((SymbolicLinkMock) this.filesystem.getSymbolicLink("stage_link")).assertTarget("releases/3");
+        ((DirectoryMock) this.filesystem.getDirectory("releases")).assertChildMissing("4");
         this.shell.assertExecuted("sudo systemctl reload php-fpm");
     }
 

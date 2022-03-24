@@ -11,8 +11,8 @@ public class FilesystemSeeder {
     public void empty(FilesystemMock filesystem) throws Exception {
         filesystem.withFile("elephant.json");
         filesystem.withDir("releases", new DirectoryMock("releases"));
-        filesystem.withSymbolicLink("production_link", new SymbolicLinkMock());
-        filesystem.withSymbolicLink("stage_link", new SymbolicLinkMock());
+        filesystem.withSymbolicLink("production_link", new SymbolicLinkMock(filesystem));
+        filesystem.withSymbolicLink("stage_link", new SymbolicLinkMock(filesystem));
     }
 
     public void initializeElephant(FilesystemMock filesystem) throws Exception {

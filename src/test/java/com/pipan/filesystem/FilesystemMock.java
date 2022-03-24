@@ -72,7 +72,12 @@ public class FilesystemMock implements Filesystem {
 
     @Override
     public Directory getDirectory(String name) {
-        return this.dirs.get(name);
+        String[] dirs = name.split(java.io.File.separator);
+        Directory directory = this.dirs.get(dirs[0]);
+        for (Integer i = 1; i < dirs.length; i++) {
+            directory = directory.enterDir(dirs[i]);
+        }
+        return directory;
     }
 
     @Override

@@ -7,13 +7,15 @@ import org.junit.jupiter.api.Assertions;
 
 public class SymbolicLinkMock implements SymbolicLink {
     private String target;
+    private Filesystem filesystem;
 
-    public SymbolicLinkMock(String target) {
+    public SymbolicLinkMock(Filesystem filesystem, String target) {
         this.target = target;
+        this.filesystem = filesystem;
     }
 
-    public SymbolicLinkMock() {
-        this(null);
+    public SymbolicLinkMock(Filesystem filesystem) {
+        this(filesystem, null);
     }
 
     public void assertTarget(String expectedTarget) throws Exception {
@@ -35,7 +37,7 @@ public class SymbolicLinkMock implements SymbolicLink {
         if (this.target == null) {
             return null;
         }
-        return new DirectoryMock(this.target, true);
+        return this.filesystem.getDirectory(this.target);
     }
 
     @Override

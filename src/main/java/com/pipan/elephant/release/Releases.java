@@ -57,6 +57,10 @@ public class Releases {
         return this.compareStageProduction() < 0;
     }
 
+    public boolean stageEqualsProduction() {
+        return this.compareStageProduction() == 0;
+    }
+
     private int compareStageProduction() {
         Directory stageDir = this.getStageDirectory();
         Directory productionDir = this.getProductionDirectory();
